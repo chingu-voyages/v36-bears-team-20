@@ -133,7 +133,7 @@ export default function Map() {
         ref={mapRef}
         {...viewport}
         onViewportChange={(viewport) => setViewPort(viewport)}
-        mapboxApiAccessToken="pk.eyJ1Ijoic2hhZnJhemkiLCJhIjoiY2t3Y2V2cDd0MG9jZzJ1cWt0cTN4NjRrZyJ9.bAyu7dLgQogqZfn4SnzweQ"
+        mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v11"
         width="100%"
         height="99vh"

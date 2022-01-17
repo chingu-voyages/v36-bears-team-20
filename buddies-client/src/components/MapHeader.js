@@ -1,7 +1,10 @@
+import { useContext } from "react";
 import PlusImage from "../images/plus.png";
 import HamburgerImg from "../images/hamburger.png";
+import { UserContext } from "../context/user-context";
 
 export default function MapHeader(props) {
+  const { isLoggedIn, handleSignOut } = useContext(UserContext);
   return (
     <header className="my-3 flex justify-center items-center absolute bottom-10 left-5 z-10">
       <div className="flex justify-center items-center w-full gap-x-2">
@@ -25,35 +28,44 @@ export default function MapHeader(props) {
           <li>
             <a
               href="/"
-              className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+              className="block py-2 px-4 text-lg font-bold text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
             >
-              Dashboard
+              Home
             </a>
           </li>
-          <li>
-            <a
-              href="/"
-              className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-            >
-              Settings
-            </a>
-          </li>
-          <li>
-            <a
-              href="/"
-              className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-            >
-              Earnings
-            </a>
-          </li>
-          <li>
-            <a
-              href="/"
-              className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-            >
-              Sign out
-            </a>
-          </li>
+          {isLoggedIn ? (
+            <>
+              <li>
+                <a
+                  href="/profile"
+                  className="block py-2 px-4 text-lg font-bold text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                >
+                  Profile
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="/"
+                  onClick={handleSignOut}
+                  className="block py-2 px-4 text-lg font-bold text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                >
+                  Sign out
+                </a>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <a
+                  href="/login"
+                  className="block py-2 px-4 text-lg font-bold text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                >
+                  Sign in
+                </a>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </header>

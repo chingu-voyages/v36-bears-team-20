@@ -1,5 +1,6 @@
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "react-datepicker/dist/react-datepicker.css";
+import "@themesberg/flowbite";
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { UserContextProvider } from "./context/user-context";

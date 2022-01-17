@@ -1,13 +1,18 @@
 # Buddies
 
 Buddies is a social media website where you can find people to share activities with,
+<<<<<<< HEAD
 If you organize a party or jwan to go for a walk you can find every day new people to spend time with.
+=======
+If you organize a party or jwan to go for a walk you can find every day new people to spend time with. 
+>>>>>>> Update README.md
 
 ## Features
 
 - Authentication
 - Mapbox, for placing a event ont the map, where other people can join the event.
 - Real Time Chat, between host and guests
+<<<<<<< HEAD
 
 ## Installation
 
@@ -39,3 +44,7 @@ If you organize a party or jwan to go for a walk you can find every day new peop
 ## License
 
 [MIT](./LICENSE)
+=======
+- Upload profile picture and update your profile.
+
+>>>>>>> Update README.md

@@ -6,6 +6,7 @@ var logger = require("morgan");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const helmet = require("helmet");
+const { errors } = require('celebrate');
 const morgan = require("morgan");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
@@ -59,7 +60,11 @@ app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
+// error handlers
+
+// celebrate error handler
+app.use(errors());
+
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;

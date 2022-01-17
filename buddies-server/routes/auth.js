@@ -35,7 +35,15 @@ router.post(
       const user = await newUser.save();
       res.status(200).json(user);
     } catch (err) {
-      res.status(500).json(err);
+      if (err.code === 11000) {
+        const response = {
+          message: "a user with the same username and/or email already exists"
+        };
+
+        res.status(409).json(response);
+      } else {
+        res.status(500).json(err);
+      }
     }
   }
 );

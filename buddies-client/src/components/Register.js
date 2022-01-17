@@ -46,9 +46,23 @@ function Register() {
         handleServerResponse(true, "Registration Succesful!");
       })
       .catch((error) => {
+        let msg;
+
+        switch(error.response.status) {
+          case 400:
+            msg = "Submitted data is invalid. Please check your inputs and try again.";
+            break;
+
+          case 409:
+            msg = "A user with the same username and/or email already exists.";
+            break;
+
+          default:
+            msg = "Unknown error occurred. Please try again later.";
+        };
+
         actions.setSubmitting(false);
-        handleServerResponse(false, error.response.data.error);
-        handleServerResponse(false, error + "");
+        handleServerResponse(false, msg);
       });
   };
 
@@ -121,7 +135,7 @@ function Register() {
               </button>
 
               {serverState && (
-                <p className={!serverState.ok ? "errorMsg" : ""}>
+                <p className={!serverState.ok ? "errorMsg text-red-500" : "text-green-600"}>
                   {serverState.msg}
                 </p>
               )}

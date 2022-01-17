@@ -5,11 +5,11 @@ const EventSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      // required: true,
+      required: true,
     },
     date: {
       type: Date,
-      // required: true
+      required: true,
     },
     picture: {
       type: String,
@@ -17,7 +17,7 @@ const EventSchema = new mongoose.Schema(
     },
     location: {
       type: Array,
-      default: [],
+      required: true,
     },
     activity: {
       type: String,
@@ -31,7 +31,7 @@ const EventSchema = new mongoose.Schema(
         "boardgames",
         "videogames",
       ],
-      // required: true,
+      required: true,
     },
     // hostId: {
     // type: Schema.Types.ObjectId,

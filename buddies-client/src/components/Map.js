@@ -113,6 +113,7 @@ export default function Map() {
               setCurrentEventId(event._id);
               togglePopup(true);
             }}
+            style={{'cursor':'pointer'}}
           />
         </Marker>
       )),

@@ -102,6 +102,7 @@ export default function Map() {
           offsetTop={-20}
           offsetLeft={-10}
           className="z-0 bg-blue-300 flex justify-center items-center px-2 py-2 rounded-full border-2 border-black"
+          captureClick={false}
         >
           <img
             src={`${event.activity}.png`}
@@ -112,6 +113,7 @@ export default function Map() {
               setCurrentEventId(event._id);
               togglePopup(true);
             }}
+            style={{'cursor':'pointer'}}
           />
         </Marker>
       )),

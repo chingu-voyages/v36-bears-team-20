@@ -63,8 +63,12 @@ export default function AddEventForm({
         setShowPin(false);
         setDefaults();
       })
-      .catch((error) => {
-        toast.error("Unknown error occurred! Please try again.");
+      .catch(({ response }) => {
+        if (response.data._message === "Event validation failed") {
+          toast.error("Please enter all required fields and try again.");
+        } else {
+          toast.error("Unknown error occurred! Please try again.");
+        }
       });
   };
 

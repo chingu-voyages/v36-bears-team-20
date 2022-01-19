@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { Popup } from "react-map-gl";
 import moment from "moment";
 import TalkImg from "../images/talk.png";
@@ -8,8 +9,9 @@ import { toast } from "react-toastify";
 
 export default function EventPopup({ currentEventId, togglePopup }) {
   const [eventOwner, setEventOwner] = useState(null);
-  const { user } = useContext(UserContext);
+  const { user, isLoggedIn } = useContext(UserContext);
   const [eventData, setEventData] = useState(null);
+  const navigate = useNavigate();
 
   const getEventOwner = (event) => {
     axios
@@ -35,17 +37,21 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   };
 
   const handleJoinEvent = () => {
-    axios
-      .put(`http://localhost:8000/api/events/join/${currentEventId}`, {
-        user: user,
-      })
-      .then((response) => {
-        setEventData(response.data);
-        toast.success("You joined the event!");
-      })
-      .catch(({ response }) => {
-        toast.error(response.data);
-      });
+    if (isLoggedIn) {
+      axios
+        .put(`http://localhost:8000/api/events/join/${currentEventId}`, {
+          user: user,
+        })
+        .then((response) => {
+          setEventData(response.data);
+          toast.success("You joined the event!");
+        })
+        .catch(({ response }) => {
+          toast.error(response.data);
+        });
+    } else {
+      navigate("/login");
+    }
   };
 
   const handleLeaveEvent = () => {
@@ -111,13 +117,24 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                   {eventData.guests.length}
                 </div>
               </i>
-              {eventData.guests.includes(user._id) ? (
-                <button
-                  className="bg-red-500 text-white text-sm rounded font-bold px-3 py-1"
-                  onClick={handleLeaveEvent}
-                >
-                  Leave
-                </button>
+              {isLoggedIn ? (
+                <div>
+                  {eventData.guests.includes(user._id) ? (
+                    <button
+                      className="bg-red-500 text-white text-sm rounded font-bold px-3 py-1"
+                      onClick={handleLeaveEvent}
+                    >
+                      Leave
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-blue-500 text-white text-sm rounded font-bold px-3 py-1"
+                      onClick={handleJoinEvent}
+                    >
+                      Join
+                    </button>
+                  )}
+                </div>
               ) : (
                 <button
                   className="bg-blue-500 text-white text-sm rounded font-bold px-3 py-1"

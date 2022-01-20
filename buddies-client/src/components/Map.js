@@ -86,7 +86,7 @@ export default function Map() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/events").then((response) => {
+    axios.get(`${process.env.BACKEND_URL || "http://localhost:8000"}/api/events`).then((response) => {
       setEventMarkers(response.data);
     });
   }, []);

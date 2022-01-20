@@ -15,7 +15,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
 
   const getEventOwner = (event) => {
     axios
-      .get(`http://localhost:8000/api/users/${event.userId}`)
+      .get(`${process.env.BACKEND_URL || "http://localhost:8000"}/api/users/${event.userId}`)
       .then((response) => {
         setEventOwner(response.data);
       })
@@ -26,7 +26,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
 
   const getEventData = () => {
     axios
-      .get(`http://localhost:8000/api/events/${currentEventId}`)
+      .get(`${process.env.BACKEND_URL || "http://localhost:8000"}/api/events/${currentEventId}`)
       .then((response) => {
         setEventData(response.data);
         getEventOwner(response.data);
@@ -39,7 +39,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   const handleJoinEvent = () => {
     if (isLoggedIn) {
       axios
-        .put(`http://localhost:8000/api/events/join/${currentEventId}`, {
+        .put(`${process.env.BACKEND_URL || "http://localhost:8000"}/api/events/join/${currentEventId}`, {
           user: user,
         })
         .then((response) => {
@@ -56,7 +56,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
 
   const handleLeaveEvent = () => {
     axios
-      .put(`http://localhost:8000/api/events/leave/${currentEventId}`, {
+      .put(`${process.env.BACKEND_URL || "http://localhost:8000"}/api/events/leave/${currentEventId}`, {
         user: user,
       })
       .then((response) => {

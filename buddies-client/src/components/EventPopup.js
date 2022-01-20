@@ -44,10 +44,16 @@ export default function EventPopup({ currentEventId, togglePopup }) {
         })
         .then((response) => {
           setEventData(response.data);
-          toast.success("You joined the event!");
+          toast.dismiss();
+          toast.clearWaitingQueue();
+          toast.success("You joined the event!",{
+            toastId: "event_join"
+          });
         })
         .catch(({ response }) => {
-          toast.error(response.data);
+          toast.error(response.data,{
+            toastId: "event_join_error"
+          });
         });
     } else {
       navigate("/login");
@@ -61,10 +67,16 @@ export default function EventPopup({ currentEventId, togglePopup }) {
       })
       .then((response) => {
         setEventData(response.data);
-        toast.success("You left the event!");
+        toast.dismiss();
+        toast.clearWaitingQueue();
+        toast.success("You left the event!",{
+          toastId: "event_left"
+        });
       })
       .catch(({ response }) => {
-        toast.error(response.data);
+        toast.error(response.data,{
+          toastId: "event_left_error"
+        });
       });
   };
 

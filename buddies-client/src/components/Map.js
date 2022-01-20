@@ -54,9 +54,8 @@ export default function Map() {
     longitude: -122.4376,
   });
 
-  // Commented out because "events" is not used yet
-  // const [events, logEvents] = useState({});
-  const logEvents = useState({})[1];
+  // eslint-disable-next-line no-unused-vars
+  const [events, logEvents] = useState({});
 
   const onMarkerDragStart = useCallback((event) => {
     logEvents((_events) => ({ ..._events, onDragStart: event.lngLat }));

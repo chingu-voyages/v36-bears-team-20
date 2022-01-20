@@ -47,7 +47,7 @@ export default function AddEventForm({
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post(`${process.env.BACKEND_URL || "http://localhost:8000"}/api/events`, {
+      .post(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/events`, {
         name: title,
         date: date,
         location: [location.latitude, location.longitude],

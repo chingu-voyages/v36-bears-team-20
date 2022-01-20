@@ -25,7 +25,9 @@ export default function Login() {
         navigate("/map");
       })
       .catch((error) => {
-        toast.error("Wrong credentials");
+        toast.error("Wrong credentials",{
+          toastId: "wrong_credentials"
+        });
       });
   };
 

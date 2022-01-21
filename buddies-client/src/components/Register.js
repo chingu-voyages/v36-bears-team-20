@@ -43,7 +43,7 @@ function Register() {
       .then((response) => {
         actions.setSubmitting(false);
         actions.resetForm();
-        handleServerResponse(true, "Registration Succesful!");
+        handleServerResponse(true, "Registration Successful!");
       })
       .catch((error) => {
         let msg;

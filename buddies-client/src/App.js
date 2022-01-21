@@ -13,7 +13,7 @@ import Map from "./components/Map";
 function App() {
   return (
     <div>
-      <ToastContainer limit={2} position="top-center" />
+      <ToastContainer limit={1} position="top-center" newestOnTop hideProgressBar={false} autoClose={4000} />
 
       <Routes>
         <Route path="*" element={<NotFound />} />

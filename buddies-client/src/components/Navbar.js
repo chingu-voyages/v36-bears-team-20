@@ -47,7 +47,7 @@ function Navbar() {
                         onBlur={() => setTimeout(() => setExpand(false), 100)}
                       >
                         <span className="sr-only">Open user menu</span>
-                        <img className="h-8 w-8 rounded-full" src={BlankProfile} alt="Profile" />
+                        <img className="h-8 w-8 rounded-full" src={BlankProfile} alt="User Profile" />
                       </button>
                     </div>
                     <div className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none ${

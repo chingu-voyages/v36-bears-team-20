@@ -15,7 +15,7 @@ export default function Login() {
   const handleLogin = (event) => {
     event.preventDefault();
     axios
-      .post("http://localhost:8000/api/auth/login", {
+      .post(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/auth/login`, {
         email: email.current.value,
         password: password.current.value,
       })

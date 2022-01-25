@@ -3,8 +3,6 @@ import MapGL, { GeolocateControl, Marker } from "react-map-gl";
 import Geocoder from "react-map-gl-geocoder";
 import axios from "axios";
 
-import Pin from "./Pin";
-
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import MapHeader from "./MapHeader";
 import AddEventForm from "./AddEventForm";
@@ -56,6 +54,7 @@ export default function Map() {
     longitude: -122.4376,
   });
 
+  // eslint-disable-next-line no-unused-vars
   const [events, logEvents] = useState({});
 
   const onMarkerDragStart = useCallback((event) => {
@@ -87,7 +86,7 @@ export default function Map() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/events").then((response) => {
+    axios.get(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/events`).then((response) => {
       setEventMarkers(response.data);
     });
   }, []);

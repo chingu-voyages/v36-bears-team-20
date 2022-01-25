@@ -47,7 +47,7 @@ app.use(cors(corsOptions));
 //middleware
 app.use(helmet());
 app.use(morgan("common"));
-app.listen(8000, () => {
+app.listen(process.env.PORT || 8000, () => {
   console.log("Backend server is running!");
 });
 app.use(bodyParser.json());

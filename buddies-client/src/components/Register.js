@@ -37,7 +37,7 @@ function Register() {
   const handleSubmit = (values, actions) => {
     axios({
       method: "POST",
-      url: "http://localhost:8000/api/auth/register",
+      url: `${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/auth/register`,
       data: values,
     })
       .then((response) => {

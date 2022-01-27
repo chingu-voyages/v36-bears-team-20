@@ -6,6 +6,10 @@ import TalkImg from "../images/talk.png";
 import { UserContext } from "../context/user-context";
 import axios from "axios";
 import { toast } from "react-toastify";
+import PeopleIcon from '@mui/icons-material/People';
+import Badge from '@mui/material/Badge';
+import IconButton from '@mui/material/IconButton';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 
 export default function EventPopup({ currentEventId, togglePopup }) {
   const [eventOwner, setEventOwner] = useState(null);
@@ -124,11 +128,11 @@ export default function EventPopup({ currentEventId, togglePopup }) {
               <p>{eventData.activity}</p>
             </div>
             <div className="flex justify-between text-2xl text-blue-500 mt-1">
-              <i className="fas fa-user-friends relative">
-                <div className="absolute bottom-4 left-5 font-sans w-5 h-5 rounded-full bg-red-500 text-white text-xs flex justify-center items-center px-1 py-1">
-                  {eventData.guests.length}
-                </div>
-              </i>
+              <IconButton aria-label="guests">
+              <Badge badgeContent={eventData.guests.length} color="secondary">
+              <PeopleIcon />
+              </Badge>
+              </IconButton>
               {isLoggedIn ? (
                 <div>
                   {eventData.guests.includes(user._id) ? (
@@ -155,8 +159,11 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                   Join
                 </button>
               )}
-
-              <i className="fas fa-comments"></i>
+              <IconButton aria-label="chat" onClick={()=>{console.log("show chat")}}>
+              <Badge badgeContent={0} color="info">
+              <ChatBubbleIcon />
+              </Badge>
+              </IconButton>
             </div>
           </div>
         </Popup>

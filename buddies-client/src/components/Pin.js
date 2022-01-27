@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from "react"
 
 function Pin() {
   return (
@@ -6,7 +6,7 @@ function Pin() {
       className="fas fa-map-marker-alt"
       style={{ fontSize: 50, color: "red", cursor: "pointer" }}
     ></i>
-  );
+  )
 }
 
-export default React.memo(Pin);
+export default React.memo(Pin)

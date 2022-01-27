@@ -1,7 +1,9 @@
-import { Avatar, Box, Button, TextField, AppBar, Toolbar } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
-import { useEffect, useRef, useState } from "react";
-import ChatMsg from "./ChatMsg";
+import { useEffect, useRef, useState } from "react"
+
+import SendIcon from "@mui/icons-material/Send"
+import { Avatar, Box, Button, TextField, AppBar, Toolbar } from "@mui/material"
+
+import ChatMsg from "./ChatMsg"
 
 const TopBar = ({ organizerName, onlineStatus }) => {
   return (
@@ -11,30 +13,30 @@ const TopBar = ({ organizerName, onlineStatus }) => {
         {organizerName} | {onlineStatus}
       </Toolbar>
     </AppBar>
-  );
-};
+  )
+}
 
-const ChatMessages = ({currentUser, messages }) => {
+const ChatMessages = ({ currentUser, messages }) => {
   // Scroll down to latest message
-  const scrollRef = useRef(null);
+  const scrollRef = useRef(null)
   useEffect(() => {
     if (scrollRef.current && messages?.at(-1)?.user === currentUser) {
       scrollRef.current.scroll({
         top: scrollRef.current.scrollHeight,
-        behaviour: "smooth"
-      });
+        behaviour: "smooth",
+      })
     }
-  }, [messages,currentUser]);
+  }, [messages, currentUser])
 
   // Group consecutive messages from same author
   const groupedMessages = messages.reduce((acc, curr) => {
     if (acc.at(-1)?.at(-1)?.user === curr.user) {
-      acc.at(-1).push(curr);
+      acc.at(-1).push(curr)
     } else {
-      acc.push([curr]);
+      acc.push([curr])
     }
-    return acc;
-  }, []);
+    return acc
+  }, [])
 
   return (
     <div
@@ -45,7 +47,7 @@ const ChatMessages = ({currentUser, messages }) => {
         overflow: "auto",
         paddingTop: 10,
         paddingLeft: 10,
-        paddingRight: 10
+        paddingRight: 10,
       }}
       ref={scrollRef}
     >
@@ -61,39 +63,39 @@ const ChatMessages = ({currentUser, messages }) => {
         />
       ))}
     </div>
-  );
-};
+  )
+}
 
 const TextInput = ({ setMessages }) => {
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState("")
   return (
     <Box
       sx={{
         display: "grid",
         gridTemplateColumns: "minmax(0, 1fr) 96px",
-        gridTemplateRows: "auto"
+        gridTemplateRows: "auto",
       }}
       component="form"
       noValidate
       autoComplete="off"
       onSubmit={(e) => {
-        e.preventDefault();
+        e.preventDefault()
         setMessages((messages) =>
           messages.concat({
             organizer: 10,
             user: 20,
             event: 20,
             message: inputText,
-            timestamp: 1643285547
+            timestamp: 1643285547,
           })
-        );
-        setInputText("");
+        )
+        setInputText("")
       }}
     >
       <TextField
         placeholder="Type here..."
         onChange={(e) => {
-          setInputText(e.target.value);
+          setInputText(e.target.value)
         }}
         value={inputText}
       />
@@ -107,8 +109,8 @@ const TextInput = ({ setMessages }) => {
         <SendIcon />
       </Button>
     </Box>
-  );
-};
+  )
+}
 
 export default function Chatbox({ organizerID, userID }) {
   const organizerName = "Yoda" // Search by organizerID for organizerName
@@ -120,37 +122,37 @@ export default function Chatbox({ organizerID, userID }) {
       user: 10,
       event: 20,
       message: "Hi!",
-      timestamp: 1643285543
+      timestamp: 1643285543,
     },
     {
       organizer: 10,
       user: 10,
       event: 20,
       message: "How's it going?",
-      timestamp: 1643285544
+      timestamp: 1643285544,
     },
     {
       organizer: 10,
       user: 20,
       event: 20,
       message: "Doing good!",
-      timestamp: 1643285545
+      timestamp: 1643285545,
     },
     {
       organizer: 10,
       user: 10,
       event: 20,
       message: "Great! See you soon!",
-      timestamp: 1643285546
+      timestamp: 1643285546,
     },
     {
       organizer: 10,
       user: 20,
       event: 20,
       message: "See you! :)",
-      timestamp: 1643285547
-    }
-  ]); // Load messages from database
+      timestamp: 1643285547,
+    },
+  ]) // Load messages from database
 
   return (
     <Box
@@ -167,12 +169,12 @@ export default function Chatbox({ organizerID, userID }) {
         padding: 0,
         minWidth: 250,
         minHeight: 500,
-        maxHeight: 500
+        maxHeight: 500,
       }}
     >
       <TopBar {...{ organizerName, onlineStatus }} />
-      <ChatMessages {...{ currentUser,messages }} />
+      <ChatMessages {...{ currentUser, messages }} />
       <TextInput {...{ setMessages }} />
     </Box>
-  );
+  )
 }

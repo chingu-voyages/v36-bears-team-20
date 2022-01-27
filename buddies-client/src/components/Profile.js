@@ -1,15 +1,17 @@
-import React, { useContext } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import ProfileBgImg from "../images/profile-bg.png";
-import { UserContext } from "../context/user-context";
+import React, { useContext } from "react"
+
+import { Navigate, useLocation } from "react-router-dom"
+
+import Navbar from "../components/Navbar"
+import { UserContext } from "../context/user-context"
+import ProfileBgImg from "../images/profile-bg.png"
 
 function Profile() {
-  const { user } = useContext(UserContext);
-  const location = useLocation();
+  const { user } = useContext(UserContext)
+  const location = useLocation()
 
   if (!user) {
-    return <Navigate to="/login" state={{ from: location }} />;
+    return <Navigate to="/login" state={{ from: location }} />
   }
   return (
     <div className="">
@@ -57,7 +59,7 @@ function Profile() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Profile;
+export default Profile

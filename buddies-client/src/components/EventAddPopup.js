@@ -1,15 +1,17 @@
-import { useContext } from "react";
-import { Popup } from "react-map-gl";
-import { UserContext } from "../context/user-context";
-import { useNavigate } from "react-router-dom";
+import { useContext } from "react"
+
+import { Popup } from "react-map-gl"
+import { useNavigate } from "react-router-dom"
+
+import { UserContext } from "../context/user-context"
 
 export default function EventAddPopup({
   marker,
   setShowEventPinDropPopup,
   setIsOpen,
 }) {
-  const { isLoggedIn } = useContext(UserContext);
-  const navigate = useNavigate();
+  const { isLoggedIn } = useContext(UserContext)
+  const navigate = useNavigate()
 
   return (
     <Popup
@@ -29,10 +31,10 @@ export default function EventAddPopup({
             className="bg-blue-400 px-2 py-1 text-white font-bold rounded"
             onClick={() => {
               if (isLoggedIn) {
-                setIsOpen(true);
-                setShowEventPinDropPopup(false);
+                setIsOpen(true)
+                setShowEventPinDropPopup(false)
               } else {
-                navigate("/login");
+                navigate("/login")
               }
             }}
           >
@@ -40,7 +42,7 @@ export default function EventAddPopup({
           </button>
           <button
             onClick={() => {
-              setShowEventPinDropPopup(false);
+              setShowEventPinDropPopup(false)
             }}
             className="bg-red-400 px-2 py-1 text-white font-bold rounded"
           >
@@ -49,5 +51,5 @@ export default function EventAddPopup({
         </div>
       </div>
     </Popup>
-  );
+  )
 }

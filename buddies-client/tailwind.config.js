@@ -9,4 +9,4 @@ module.exports = {
   },
   plugins: [require("@themesberg/flowbite/plugin")],
   content: ["./node_modules/@themesberg/flowbite/**/*.js"],
-};
+}

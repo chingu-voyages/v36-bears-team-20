@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"
 
-const UserContext = React.createContext(null);
+const UserContext = React.createContext(null)
 
 function UserContextProvider(props) {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")))
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     if (!user) {
-      setIsLoggedIn(false);
+      setIsLoggedIn(false)
     } else {
-      setIsLoggedIn(true);
+      setIsLoggedIn(true)
     }
-  }, [user]);
+  }, [user])
 
   const handleSignOut = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-    setIsLoggedIn(false);
-  };
+    localStorage.removeItem("user")
+    setUser(null)
+    setIsLoggedIn(false)
+  }
 
   return (
     <UserContext.Provider
@@ -32,7 +32,7 @@ function UserContextProvider(props) {
     >
       {props.children}
     </UserContext.Provider>
-  );
+  )
 }
 
-export { UserContext, UserContextProvider };
+export { UserContext, UserContextProvider }

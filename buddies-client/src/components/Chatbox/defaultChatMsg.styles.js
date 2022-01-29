@@ -1,6 +1,6 @@
 const styles = ({ palette, spacing }) => {
-  const radius = "8px"
-  const rightBgColor = "#09f"
+  const radius = "8px";
+  const rightBgColor = "#09f";
   // if you want the same as facebook messenger, use this color '#09f'
   return {
     leftRow: {
@@ -33,6 +33,6 @@ const styles = ({ palette, spacing }) => {
       backgroundColor: rightBgColor,
       color: "#fff",
     },
-  }
-}
-export default styles
+  };
+};
+export default styles;

@@ -1,12 +1,12 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState } from "react";
 
-import { UserContext } from "../context/user-context"
-import BlankProfile from "../images/blankProfile.png"
+import { UserContext } from "../context/user-context";
+import BlankProfile from "../images/blankProfile.png";
 
 function Navbar() {
-  const { isLoggedIn, handleSignOut } = useContext(UserContext)
+  const { isLoggedIn, handleSignOut } = useContext(UserContext);
 
-  const [isExpanded, setExpand] = useState(false)
+  const [isExpanded, setExpand] = useState(false);
 
   return (
     <header>
@@ -105,7 +105,7 @@ function Navbar() {
         </div>
       </nav>
     </header>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

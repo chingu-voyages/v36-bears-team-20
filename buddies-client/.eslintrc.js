@@ -10,12 +10,12 @@ module.exports = {
   ],
   plugins: ["jsx-a11y", "prettier", "import"],
   rules: {
-    semi: 0,
+    semi: 1,
     "react/jsx-filename-extension": [1, { extensions: [".js", ".jsx"] }],
     "prettier/prettier": [
       "error",
       {
-        semi: false,
+        semi: true,
       },
     ],
     "linebreak-style": ["error", "unix"],
@@ -45,4 +45,4 @@ module.exports = {
       },
     ],
   },
-}
+};

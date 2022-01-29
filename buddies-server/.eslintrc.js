@@ -5,11 +5,11 @@ module.exports = {
   extends: ["plugin:jsx-a11y/recommended", "prettier"],
   plugins: ["jsx-a11y", "prettier", "import"],
   rules: {
-    semi: 0,
+    semi: 1,
     "prettier/prettier": [
       "error",
       {
-        semi: false,
+        semi: true,
       },
     ],
     "linebreak-style": ["error", "unix"],
@@ -39,4 +39,4 @@ module.exports = {
       },
     ],
   },
-}
+};

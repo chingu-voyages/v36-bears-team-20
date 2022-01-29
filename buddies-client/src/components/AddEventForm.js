@@ -1,11 +1,11 @@
-import { useState, useContext } from "react"
+import { useState, useContext } from "react";
 
-import axios from "axios"
-import DatePicker from "react-datepicker"
-import { toast } from "react-toastify"
+import axios from "axios";
+import DatePicker from "react-datepicker";
+import { toast } from "react-toastify";
 
-import { UserContext } from "../context/user-context"
-import EventType from "./EventType"
+import { UserContext } from "../context/user-context";
+import EventType from "./EventType";
 
 export default function AddEventForm({
   isOpen,
@@ -14,35 +14,35 @@ export default function AddEventForm({
   setEventMarkers,
   setShowPin,
 }) {
-  const eventTypes_ = ["party", "drink", "coffee", "talk", "walk", "sports"]
-  const { user } = useContext(UserContext)
-  const [formEventType, setFormEventType] = useState()
+  const eventTypes_ = ["party", "drink", "coffee", "talk", "walk", "sports"];
+  const { user } = useContext(UserContext);
+  const [formEventType, setFormEventType] = useState();
   const [eventTypes, setEventTypes] = useState(
     eventTypes_.map((type) => {
-      return { type: type, isSelected: false }
+      return { type: type, isSelected: false };
     })
-  )
+  );
 
-  const [title, setTitle] = useState("")
-  const [date, setDate] = useState()
+  const [title, setTitle] = useState("");
+  const [date, setDate] = useState();
 
   const setDefaults = () => {
-    setTitle("")
-    setDate()
-    setFormEventType()
+    setTitle("");
+    setDate();
+    setFormEventType();
     setEventTypes(
       eventTypes_.map((type) => {
-        return { type: type, isSelected: false }
+        return { type: type, isSelected: false };
       })
-    )
-  }
+    );
+  };
 
   const getIndex = (arr, element) => {
-    return arr.indexOf(element)
-  }
+    return arr.indexOf(element);
+  };
 
   const handleSubmit = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     axios
       .post(
         `${
@@ -57,53 +57,53 @@ export default function AddEventForm({
         }
       )
       .then((response) => {
-        toast.dismiss()
-        toast.clearWaitingQueue()
+        toast.dismiss();
+        toast.clearWaitingQueue();
         toast.success("Event added successfully!", {
           toastId: "event_add",
-        })
+        });
         setEventMarkers((prev) => {
-          return [...prev, response.data]
-        })
-        setIsOpen(false)
-        setShowPin(false)
-        setDefaults()
+          return [...prev, response.data];
+        });
+        setIsOpen(false);
+        setShowPin(false);
+        setDefaults();
       })
       .catch(({ response }) => {
         if (response.data._message === "Event validation failed") {
           toast.error("Please enter all required fields and try again.", {
             toastId: "enter_all_required_fields",
-          })
+          });
         } else {
           toast.error("Unknown error occurred! Please try again.", {
             toastId: "unknown_error",
-          })
+          });
         }
-      })
-  }
+      });
+  };
 
   const filterPassedTime = (time) => {
-    const currentDate = new Date()
-    const selectedDate = new Date(time)
+    const currentDate = new Date();
+    const selectedDate = new Date(time);
 
-    return currentDate.getTime() < selectedDate.getTime()
-  }
+    return currentDate.getTime() < selectedDate.getTime();
+  };
 
   const handleClick = (type) => {
     setEventTypes((prev) => {
-      const index = getIndex(prev, type)
+      const index = getIndex(prev, type);
       const newArr = prev.filter((element) => {
-        return prev.indexOf(element) !== index
-      })
+        return prev.indexOf(element) !== index;
+      });
       newArr.forEach((element) => {
-        return (element.isSelected = false)
-      })
-      newArr.splice(index, 0, { ...type, isSelected: true })
-      return newArr
-    })
+        return (element.isSelected = false);
+      });
+      newArr.splice(index, 0, { ...type, isSelected: true });
+      return newArr;
+    });
 
-    setFormEventType(type.type)
-  }
+    setFormEventType(type.type);
+  };
 
   return (
     <div
@@ -118,8 +118,8 @@ export default function AddEventForm({
             viewBox="0 0 20 20"
             fill="currentColor"
             onClick={() => {
-              setIsOpen(false)
-              setDefaults()
+              setIsOpen(false);
+              setDefaults();
             }}
           >
             <path
@@ -140,7 +140,7 @@ export default function AddEventForm({
                 isSelected={eventType.isSelected}
                 handleClick={handleClick}
               />
-            )
+            );
           })}
         </div>
         <input
@@ -148,7 +148,7 @@ export default function AddEventForm({
           placeholder="Title"
           value={title}
           onChange={(event) => {
-            setTitle(event.target.value)
+            setTitle(event.target.value);
           }}
           className="bg-gray-200 px-3 py-1 rounded mt-3 w-2/3"
         ></input>
@@ -173,5 +173,5 @@ export default function AddEventForm({
         </button>
       </div>
     </div>
-  )
+  );
 }

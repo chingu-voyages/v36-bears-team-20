@@ -1,18 +1,18 @@
-import React from "react"
+import React from "react";
 
-import { Box } from "@mui/material"
-import Grid from "@mui/material/Grid"
-import Typography from "@mui/material/Typography"
-import { withStyles } from "@mui/styles"
-import cx from "clsx"
-import PropTypes from "prop-types"
+import { Box } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { withStyles } from "@mui/styles";
+import cx from "clsx";
+import PropTypes from "prop-types";
 
-import defaultChatMsgStyles from "./defaultChatMsg.styles"
+import defaultChatMsgStyles from "./defaultChatMsg.styles";
 
 const ChatMsg = withStyles(defaultChatMsgStyles, { name: "ChatMsg" })(
   (props) => {
     const { classes, messages, side, GridContainerProps, getTypographyProps } =
-      props
+      props;
 
     return (
       <Grid
@@ -23,7 +23,7 @@ const ChatMsg = withStyles(defaultChatMsgStyles, { name: "ChatMsg" })(
       >
         <Grid item xs={12}>
           {messages.map((msg, i) => {
-            const TypographyProps = getTypographyProps(msg, i, props)
+            const TypographyProps = getTypographyProps(msg, i, props);
             return (
               <Box key={msg.id || i} className={classes[`${side}Row`]}>
                 <Typography
@@ -38,23 +38,23 @@ const ChatMsg = withStyles(defaultChatMsgStyles, { name: "ChatMsg" })(
                   {msg}
                 </Typography>
               </Box>
-            )
+            );
           })}
         </Grid>
       </Grid>
-    )
+    );
   }
-)
+);
 ChatMsg.propTypes = {
   messages: PropTypes.arrayOf(PropTypes.string),
   side: PropTypes.oneOf(["left", "right"]),
   GridContainerProps: PropTypes.shape({}),
   getTypographyProps: PropTypes.func,
-}
+};
 ChatMsg.defaultProps = {
   messages: [],
   side: "left",
   GridContainerProps: {},
   getTypographyProps: () => ({}),
-}
-export default ChatMsg
+};
+export default ChatMsg;

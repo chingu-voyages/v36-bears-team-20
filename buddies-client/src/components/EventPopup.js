@@ -1,23 +1,23 @@
-import { useState, useEffect, useContext } from "react"
+import { useState, useEffect, useContext } from "react";
 
-import ChatBubbleIcon from "@mui/icons-material/ChatBubble"
-import PeopleIcon from "@mui/icons-material/People"
-import Badge from "@mui/material/Badge"
-import IconButton from "@mui/material/IconButton"
-import axios from "axios"
-import moment from "moment"
-import { Popup } from "react-map-gl"
-import { useNavigate } from "react-router-dom"
-import { toast } from "react-toastify"
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import PeopleIcon from "@mui/icons-material/People";
+import Badge from "@mui/material/Badge";
+import IconButton from "@mui/material/IconButton";
+import axios from "axios";
+import moment from "moment";
+import { Popup } from "react-map-gl";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-import { UserContext } from "../context/user-context"
-import TalkImg from "../images/talk.png"
+import { UserContext } from "../context/user-context";
+import TalkImg from "../images/talk.png";
 
 export default function EventPopup({ currentEventId, togglePopup }) {
-  const [eventOwner, setEventOwner] = useState(null)
-  const { user, isLoggedIn } = useContext(UserContext)
-  const [eventData, setEventData] = useState(null)
-  const navigate = useNavigate()
+  const [eventOwner, setEventOwner] = useState(null);
+  const { user, isLoggedIn } = useContext(UserContext);
+  const [eventData, setEventData] = useState(null);
+  const navigate = useNavigate();
 
   const getEventOwner = (event) => {
     axios
@@ -27,12 +27,12 @@ export default function EventPopup({ currentEventId, togglePopup }) {
         }/api/users/${event.userId}`
       )
       .then((response) => {
-        setEventOwner(response.data)
+        setEventOwner(response.data);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const getEventData = () => {
     axios
@@ -42,13 +42,13 @@ export default function EventPopup({ currentEventId, togglePopup }) {
         }/api/events/${currentEventId}`
       )
       .then((response) => {
-        setEventData(response.data)
-        getEventOwner(response.data)
+        setEventData(response.data);
+        getEventOwner(response.data);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const handleJoinEvent = () => {
     if (isLoggedIn) {
@@ -62,22 +62,22 @@ export default function EventPopup({ currentEventId, togglePopup }) {
           }
         )
         .then((response) => {
-          setEventData(response.data)
-          toast.dismiss()
-          toast.clearWaitingQueue()
+          setEventData(response.data);
+          toast.dismiss();
+          toast.clearWaitingQueue();
           toast.success("You joined the event!", {
             toastId: "event_join",
-          })
+          });
         })
         .catch(({ response }) => {
           toast.error(response.data, {
             toastId: "event_join_error",
-          })
-        })
+          });
+        });
     } else {
-      navigate("/login")
+      navigate("/login");
     }
-  }
+  };
 
   const handleLeaveEvent = () => {
     axios
@@ -90,24 +90,24 @@ export default function EventPopup({ currentEventId, togglePopup }) {
         }
       )
       .then((response) => {
-        setEventData(response.data)
-        toast.dismiss()
-        toast.clearWaitingQueue()
+        setEventData(response.data);
+        toast.dismiss();
+        toast.clearWaitingQueue();
         toast.success("You left the event!", {
           toastId: "event_left",
-        })
+        });
       })
       .catch(({ response }) => {
         toast.error(response.data, {
           toastId: "event_left_error",
-        })
-      })
-  }
+        });
+      });
+  };
 
   useEffect(() => {
-    getEventData()
+    getEventData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   return (
     <div>
@@ -182,7 +182,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
               <IconButton
                 aria-label="chat"
                 onClick={() => {
-                  console.log("show chat")
+                  console.log("show chat");
                 }}
               >
                 <Badge badgeContent={0} color="info">
@@ -194,5 +194,5 @@ export default function EventPopup({ currentEventId, togglePopup }) {
         </Popup>
       )}
     </div>
-  )
+  );
 }

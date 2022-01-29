@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 function NotFound() {
   return (
@@ -530,7 +530,7 @@ function NotFound() {
         />
       </svg>
     </div>
-  )
+  );
 }
 
-export default NotFound
+export default NotFound;

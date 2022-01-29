@@ -1,91 +1,91 @@
-import { useState, useMemo, useRef, useCallback, useEffect } from "react"
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 
-import { ButtonBase } from "@mui/material"
-import axios from "axios"
-import MapGL, { GeolocateControl, Marker } from "react-map-gl"
-import Geocoder from "react-map-gl-geocoder"
+import { ButtonBase } from "@mui/material";
+import axios from "axios";
+import MapGL, { GeolocateControl, Marker } from "react-map-gl";
+import Geocoder from "react-map-gl-geocoder";
 
-import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css"
-import AddEventForm from "./AddEventForm"
-import EventAddPopup from "./EventAddPopup"
-import EventMarkerPin from "./EventMarkerPin"
-import EventPopup from "./EventPopup"
-import MapHeader from "./MapHeader"
+import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import AddEventForm from "./AddEventForm";
+import EventAddPopup from "./EventAddPopup";
+import EventMarkerPin from "./EventMarkerPin";
+import EventPopup from "./EventPopup";
+import MapHeader from "./MapHeader";
 
 const geolocateControlStyle = {
   right: 10,
   top: 10,
-}
+};
 
 export default function Map() {
   const [viewport, setViewPort] = useState({
     latitude: 37.7577,
     longitude: -122.4376,
     zoom: 9,
-  })
+  });
 
-  const mapRef = useRef()
+  const mapRef = useRef();
 
-  const [isOpen, setIsOpen] = useState(false)
-  const [eventMarkers, setEventMarkers] = useState([])
+  const [isOpen, setIsOpen] = useState(false);
+  const [eventMarkers, setEventMarkers] = useState([]);
 
-  const [showPin, setShowPin] = useState(false)
+  const [showPin, setShowPin] = useState(false);
 
-  const [showPopup, togglePopup] = useState(false)
-  const [showEventPinDropPopup, setShowEventPinDropPopup] = useState(false)
-  const [currentEventId, setCurrentEventId] = useState(null)
+  const [showPopup, togglePopup] = useState(false);
+  const [showEventPinDropPopup, setShowEventPinDropPopup] = useState(false);
+  const [currentEventId, setCurrentEventId] = useState(null);
 
   const handleViewportChange = useCallback(
     (newViewport) => setViewPort(newViewport),
     []
-  )
+  );
 
   const handleGeocoderViewportChange = useCallback(
     (newViewport) => {
-      const geocoderDefaultOverrides = { transitionDuration: 1000 }
+      const geocoderDefaultOverrides = { transitionDuration: 1000 };
 
       return handleViewportChange({
         ...newViewport,
         ...geocoderDefaultOverrides,
-      })
+      });
     },
     [handleViewportChange]
-  )
+  );
   const [marker, setMarker] = useState({
     latitude: 37.7577,
     longitude: -122.4376,
-  })
+  });
 
   // eslint-disable-next-line no-unused-vars
-  const [events, logEvents] = useState({})
+  const [events, logEvents] = useState({});
 
   const onMarkerDragStart = useCallback((event) => {
-    logEvents((_events) => ({ ..._events, onDragStart: event.lngLat }))
-  }, [])
+    logEvents((_events) => ({ ..._events, onDragStart: event.lngLat }));
+  }, []);
 
   const onMarkerDrag = useCallback((event) => {
-    logEvents((_events) => ({ ..._events, onDrag: event.lngLat }))
-    setShowEventPinDropPopup(false)
-  }, [])
+    logEvents((_events) => ({ ..._events, onDrag: event.lngLat }));
+    setShowEventPinDropPopup(false);
+  }, []);
 
   const onMarkerDragEnd = useCallback((event) => {
-    logEvents((_events) => ({ ..._events, onDragEnd: event.lngLat }))
+    logEvents((_events) => ({ ..._events, onDragEnd: event.lngLat }));
     setMarker({
       longitude: event.lngLat[0],
       latitude: event.lngLat[1],
-    })
-    setShowEventPinDropPopup(true)
-  }, [])
+    });
+    setShowEventPinDropPopup(true);
+  }, []);
 
   const handleDropPin = () => {
     setMarker({
       longitude: viewport.longitude,
       latitude: viewport.latitude,
-    })
-    setShowEventPinDropPopup(false)
-    setShowPin(true)
-    togglePopup(false)
-  }
+    });
+    setShowEventPinDropPopup(false);
+    setShowPin(true);
+    togglePopup(false);
+  };
 
   useEffect(() => {
     axios
@@ -95,9 +95,9 @@ export default function Map() {
         }/api/events`
       )
       .then((response) => {
-        setEventMarkers(response.data)
-      })
-  }, [])
+        setEventMarkers(response.data);
+      });
+  }, []);
 
   const markers = useMemo(
     () =>
@@ -115,8 +115,8 @@ export default function Map() {
             disableRipple
             disableTouchRipple
             onClick={() => {
-              setCurrentEventId(event._id)
-              togglePopup(true)
+              setCurrentEventId(event._id);
+              togglePopup(true);
             }}
           >
             <img
@@ -131,7 +131,7 @@ export default function Map() {
       )),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [eventMarkers]
-  )
+  );
 
   return (
     <div className="relative flex flex-col justify-center items-center">
@@ -189,5 +189,5 @@ export default function Map() {
         {markers}
       </MapGL>
     </div>
-  )
+  );
 }

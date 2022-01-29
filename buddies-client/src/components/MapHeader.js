@@ -1,12 +1,12 @@
-import { useContext, useState } from "react"
+import { useContext, useState } from "react";
 
-import { UserContext } from "../context/user-context"
-import HamburgerImg from "../images/hamburger.png"
-import PlusImage from "../images/plus.png"
+import { UserContext } from "../context/user-context";
+import HamburgerImg from "../images/hamburger.png";
+import PlusImage from "../images/plus.png";
 
 export default function MapHeader(props) {
-  const { isLoggedIn, handleSignOut } = useContext(UserContext)
-  const [isOpen, setIsOpen] = useState(false)
+  const { isLoggedIn, handleSignOut } = useContext(UserContext);
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <header className="my-3 flex justify-center items-center absolute bottom-10 left-5 z-10">
       <div className="relative flex justify-center items-center w-full gap-x-2">
@@ -16,8 +16,8 @@ export default function MapHeader(props) {
         <button
           onClick={() => {
             setIsOpen((prev) => {
-              return !prev
-            })
+              return !prev;
+            });
           }}
           className=""
           id="dropdownTopButton"
@@ -76,5 +76,5 @@ export default function MapHeader(props) {
         </div>
       </div>
     </header>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { ButtonBase } from "@mui/material"
+import { ButtonBase } from "@mui/material";
 
 export default function EventType({ eventType, isSelected, handleClick }) {
   return (
@@ -11,7 +11,7 @@ export default function EventType({ eventType, isSelected, handleClick }) {
         disableRipple
         disableTouchRipple
         onClick={() => {
-          handleClick(eventType)
+          handleClick(eventType);
         }}
       >
         <img
@@ -22,5 +22,5 @@ export default function EventType({ eventType, isSelected, handleClick }) {
         />
       </ButtonBase>
     </div>
-  )
+  );
 }

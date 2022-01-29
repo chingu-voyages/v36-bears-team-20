@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react";
 
-import SendIcon from "@mui/icons-material/Send"
-import { Avatar, Box, Button, TextField, AppBar, Toolbar } from "@mui/material"
+import SendIcon from "@mui/icons-material/Send";
+import { Avatar, Box, Button, TextField, AppBar, Toolbar } from "@mui/material";
 
-import ChatMsg from "./ChatMsg"
+import ChatMsg from "./ChatMsg";
 
 const TopBar = ({ organizerName, onlineStatus }) => {
   return (
@@ -13,30 +13,30 @@ const TopBar = ({ organizerName, onlineStatus }) => {
         {organizerName} | {onlineStatus}
       </Toolbar>
     </AppBar>
-  )
-}
+  );
+};
 
 const ChatMessages = ({ currentUser, messages }) => {
   // Scroll down to latest message
-  const scrollRef = useRef(null)
+  const scrollRef = useRef(null);
   useEffect(() => {
     if (scrollRef.current && messages?.at(-1)?.user === currentUser) {
       scrollRef.current.scroll({
         top: scrollRef.current.scrollHeight,
         behaviour: "smooth",
-      })
+      });
     }
-  }, [messages, currentUser])
+  }, [messages, currentUser]);
 
   // Group consecutive messages from same author
   const groupedMessages = messages.reduce((acc, curr) => {
     if (acc.at(-1)?.at(-1)?.user === curr.user) {
-      acc.at(-1).push(curr)
+      acc.at(-1).push(curr);
     } else {
-      acc.push([curr])
+      acc.push([curr]);
     }
-    return acc
-  }, [])
+    return acc;
+  }, []);
 
   return (
     <div
@@ -63,11 +63,11 @@ const ChatMessages = ({ currentUser, messages }) => {
         />
       ))}
     </div>
-  )
-}
+  );
+};
 
 const TextInput = ({ setMessages }) => {
-  const [inputText, setInputText] = useState("")
+  const [inputText, setInputText] = useState("");
   return (
     <Box
       sx={{
@@ -79,7 +79,7 @@ const TextInput = ({ setMessages }) => {
       noValidate
       autoComplete="off"
       onSubmit={(e) => {
-        e.preventDefault()
+        e.preventDefault();
         setMessages((messages) =>
           messages.concat({
             organizer: 10,
@@ -88,14 +88,14 @@ const TextInput = ({ setMessages }) => {
             message: inputText,
             timestamp: 1643285547,
           })
-        )
-        setInputText("")
+        );
+        setInputText("");
       }}
     >
       <TextField
         placeholder="Type here..."
         onChange={(e) => {
-          setInputText(e.target.value)
+          setInputText(e.target.value);
         }}
         value={inputText}
       />
@@ -109,13 +109,13 @@ const TextInput = ({ setMessages }) => {
         <SendIcon />
       </Button>
     </Box>
-  )
-}
+  );
+};
 
 export default function Chatbox({ organizerID, userID }) {
-  const organizerName = "Yoda" // Search by organizerID for organizerName
-  const onlineStatus = "online" // Search by organizerID for onlineStatus
-  const currentUser = 20
+  const organizerName = "Yoda"; // Search by organizerID for organizerName
+  const onlineStatus = "online"; // Search by organizerID for onlineStatus
+  const currentUser = 20;
   const [messages, setMessages] = useState([
     {
       organizer: 10,
@@ -152,7 +152,7 @@ export default function Chatbox({ organizerID, userID }) {
       message: "See you! :)",
       timestamp: 1643285547,
     },
-  ]) // Load messages from database
+  ]); // Load messages from database
 
   return (
     <Box
@@ -176,5 +176,5 @@ export default function Chatbox({ organizerID, userID }) {
       <ChatMessages {...{ currentUser, messages }} />
       <TextInput {...{ setMessages }} />
     </Box>
-  )
+  );
 }

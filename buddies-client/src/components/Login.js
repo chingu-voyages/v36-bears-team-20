@@ -1,21 +1,21 @@
-import { useRef, useContext } from "react"
+import { useRef, useContext } from "react";
 
-import axios from "axios"
-import { useNavigate, Navigate } from "react-router-dom"
-import { Link } from "react-router-dom"
-import { toast } from "react-toastify"
+import axios from "axios";
+import { useNavigate, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
-import { UserContext } from "../context/user-context"
-import HikingImg from "../images/hikingImg.jpg"
+import { UserContext } from "../context/user-context";
+import HikingImg from "../images/hikingImg.jpg";
 
 export default function Login() {
-  const email = useRef()
-  const password = useRef()
-  const navigate = useNavigate()
-  const { setUser, user } = useContext(UserContext)
+  const email = useRef();
+  const password = useRef();
+  const navigate = useNavigate();
+  const { setUser, user } = useContext(UserContext);
 
   const handleLogin = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     axios
       .post(
         `${
@@ -27,19 +27,19 @@ export default function Login() {
         }
       )
       .then((response) => {
-        setUser(response.data)
-        localStorage.setItem("user", JSON.stringify(response.data))
-        navigate("/map")
+        setUser(response.data);
+        localStorage.setItem("user", JSON.stringify(response.data));
+        navigate("/map");
       })
       .catch((error) => {
         toast.error("Wrong credentials", {
           toastId: "wrong_credentials",
-        })
-      })
-  }
+        });
+      });
+  };
 
   if (user) {
-    return <Navigate to="/map" />
+    return <Navigate to="/map" />;
   }
 
   return (
@@ -82,5 +82,5 @@ export default function Login() {
         </Link>
       </div>
     </div>
-  )
+  );
 }

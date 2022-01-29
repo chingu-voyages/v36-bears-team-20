@@ -1,14 +1,14 @@
-import "./App.css"
-import { Route, Routes } from "react-router-dom"
-import { ToastContainer } from "react-toastify"
+import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
-import "react-toastify/dist/ReactToastify.css"
-import Home from "./components/Home"
-import Login from "./components/Login"
-import Map from "./components/Map"
-import NotFound from "./components/NotFound"
-import Profile from "./components/Profile"
-import Register from "./components/Register"
+import "react-toastify/dist/ReactToastify.css";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Map from "./components/Map";
+import NotFound from "./components/NotFound";
+import Profile from "./components/Profile";
+import Register from "./components/Register";
 
 function App() {
   return (
@@ -31,7 +31,7 @@ function App() {
         <Route path="/map" element={<Map />} />
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,6 +1,6 @@
-import { Marker } from "react-map-gl"
+import { Marker } from "react-map-gl";
 
-import Pin from "./Pin"
+import Pin from "./Pin";
 
 export default function EventMarkerPin({
   marker,
@@ -23,5 +23,5 @@ export default function EventMarkerPin({
     >
       <Pin size={30} />
     </Marker>
-  )
+  );
 }

@@ -1,21 +1,21 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState } from "react";
 
-import axios from "axios"
-import { Formik, Field, Form, ErrorMessage } from "formik"
-import { Link, Navigate } from "react-router-dom"
-import * as Yup from "yup"
+import axios from "axios";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Link, Navigate } from "react-router-dom";
+import * as Yup from "yup";
 
-import { UserContext } from "../context/user-context"
-import RegisterImg from "../images/registerImg.jpg"
+import { UserContext } from "../context/user-context";
+import RegisterImg from "../images/registerImg.jpg";
 
 function Register() {
   const initialValues = {
     username: "",
     email: "",
     password: "",
-  }
+  };
 
-  const { user } = useContext(UserContext)
+  const { user } = useContext(UserContext);
 
   const validationSchema = () => {
     return Yup.object().shape({
@@ -30,12 +30,12 @@ function Register() {
         .required("Password is required")
         .min(6, "Password must be at least 6 characters")
         .max(40, "Password must not exceed 40 characters"),
-    })
-  }
-  const [serverState, setServerState] = useState()
+    });
+  };
+  const [serverState, setServerState] = useState();
   const handleServerResponse = (ok, msg) => {
-    setServerState({ ok, msg })
-  }
+    setServerState({ ok, msg });
+  };
   const handleSubmit = (values, actions) => {
     axios({
       method: "POST",
@@ -45,34 +45,34 @@ function Register() {
       data: values,
     })
       .then((response) => {
-        actions.setSubmitting(false)
-        actions.resetForm()
-        handleServerResponse(true, "Registration Successful!")
+        actions.setSubmitting(false);
+        actions.resetForm();
+        handleServerResponse(true, "Registration Successful!");
       })
       .catch((error) => {
-        let msg
+        let msg;
 
         switch (error.response.status) {
           case 400:
             msg =
-              "Submitted data is invalid. Please check your inputs and try again."
-            break
+              "Submitted data is invalid. Please check your inputs and try again.";
+            break;
 
           case 409:
-            msg = "A user with the same username and/or email already exists."
-            break
+            msg = "A user with the same username and/or email already exists.";
+            break;
 
           default:
-            msg = "Unknown error occurred. Please try again later."
+            msg = "Unknown error occurred. Please try again later.";
         }
 
-        actions.setSubmitting(false)
-        handleServerResponse(false, msg)
-      })
-  }
+        actions.setSubmitting(false);
+        handleServerResponse(false, msg);
+      });
+  };
 
   if (user) {
-    return <Navigate to="/profile" />
+    return <Navigate to="/profile" />;
   }
 
   return (
@@ -157,6 +157,6 @@ function Register() {
         </Link>
       </div>
     </div>
-  )
+  );
 }
-export default Register
+export default Register;

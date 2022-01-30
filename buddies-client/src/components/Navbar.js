@@ -68,21 +68,21 @@ function Navbar() {
                       role="menu"
                       aria-orientation="vertical"
                       aria-labelledby="user-menu-button"
-                      tabindex="-1"
+                      tabIndex="-1"
                     >
-                      <a href="/profile" role="menuitem" tabindex="-1">
+                      <a href="/profile" role="menuitem" tabIndex="-1">
                         <button className="block px-4 py-2 text-sm text-gray-700">
                           My Profile
                         </button>
                       </a>
-                      <a href="/map" role="menuitem" tabindex="-1">
+                      <a href="/map" role="menuitem" tabIndex="-1">
                         <button className="block px-4 py-2 text-sm text-gray-700">
                           Map
                         </button>
                       </a>
                       <button
                         role="menuitem"
-                        tabindex="-1"
+                        tabIndex="-1"
                         onClick={handleSignOut}
                         className="block px-4 py-2 text-sm text-gray-700"
                       >

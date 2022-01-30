@@ -32,7 +32,7 @@ function Profile() {
                   type="text"
                   placeholder="Username"
                   id="loginInput"
-                  value={user.username}
+                  defaultValue={user.username}
                 />
 
                 <input
@@ -40,7 +40,7 @@ function Profile() {
                   type="email"
                   required
                   className="loginInput"
-                  value={user.email}
+                  defaultValue={user.email}
                 />
 
                 <input

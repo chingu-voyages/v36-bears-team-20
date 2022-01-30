@@ -61,16 +61,14 @@ export default function MapHeader(props) {
                 </li>
               </>
             ) : (
-              <>
-                <li>
-                  <a
-                    href="/login"
-                    className="block py-2 px-4 text-lg font-bold text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >
-                    Sign in
-                  </a>
-                </li>
-              </>
+              <li>
+                <a
+                  href="/login"
+                  className="block py-2 px-4 text-lg font-bold text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                >
+                  Sign in
+                </a>
+              </li>
             )}
           </ul>
         </div>

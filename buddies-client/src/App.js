@@ -12,7 +12,7 @@ import Register from "./components/Register";
 
 function App() {
   return (
-    <div>
+    <>
       <ToastContainer
         limit={1}
         position="top-center"
@@ -30,7 +30,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/map" element={<Map />} />
       </Routes>
-    </div>
+    </>
   );
 }
 

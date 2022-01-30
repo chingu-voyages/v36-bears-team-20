@@ -110,7 +110,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   }, []);
 
   return (
-    <div>
+    <>
       {eventData && (
         <Popup
           latitude={eventData.location[0]}
@@ -154,7 +154,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                 </Badge>
               </IconButton>
               {isLoggedIn ? (
-                <div>
+                <>
                   {eventData.guests.includes(user._id) ? (
                     <button
                       className="bg-red-500 text-white text-sm rounded font-bold px-3 py-1"
@@ -170,7 +170,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                       Join
                     </button>
                   )}
-                </div>
+                </>
               ) : (
                 <button
                   className="bg-blue-500 text-white text-sm rounded font-bold px-3 py-1"
@@ -193,6 +193,6 @@ export default function EventPopup({ currentEventId, togglePopup }) {
           </div>
         </Popup>
       )}
-    </div>
+    </>
   );
 }

@@ -13,7 +13,6 @@ const authRoute = require("./routes/auth");
 const eventRoute = require("./routes/event");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const yup = require("yup");
 dotenv.config();
 
 mongoose.connect(

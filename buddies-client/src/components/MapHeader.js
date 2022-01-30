@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 import AddIcon from "@mui/icons-material/Add";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -8,15 +8,19 @@ import Fab from "@mui/material/Fab";
 import { UserContext } from "../context/user-context";
 
 export default function MapHeader(props) {
-  const { isLoggedIn, handleSignOut } = useContext(UserContext);
-  const [isOpen, setIsOpen] = useState(false);
+  const { isLoggedIn, handleSignOut, hamburgerIsOpen, setHamburgerIsOpen } =
+    useContext(UserContext);
+
   return (
     <header className="my-3 flex justify-center items-center absolute bottom-10 left-5 z-10">
       <div className="relative flex justify-center items-center w-full gap-x-2">
         <Fab
           color="inherit"
           aria-label="add"
-          onClick={props.handleDropPin}
+          onClick={() => {
+            setHamburgerIsOpen(false);
+            return props.handleDropPin();
+          }}
           sx={{
             color: "common.white",
             bgcolor: red[500],
@@ -31,7 +35,7 @@ export default function MapHeader(props) {
           color="inherit"
           aria-label="menu"
           onClick={() => {
-            setIsOpen((prev) => {
+            setHamburgerIsOpen((prev) => {
               return !prev;
             });
           }}
@@ -49,7 +53,7 @@ export default function MapHeader(props) {
         <div
           id="dropdownTop"
           className={`${
-            !isOpen && "hidden"
+            !hamburgerIsOpen && "hidden"
           } absolute bottom-20 left-2 z-10 w-60 text-2xl list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700`}
         >
           <ul className="py-1" aria-labelledby="dropdownTopButton">

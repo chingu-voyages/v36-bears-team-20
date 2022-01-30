@@ -1,4 +1,11 @@
-import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import {
+  useState,
+  useMemo,
+  useRef,
+  useCallback,
+  useEffect,
+  useContext,
+} from "react";
 
 import { ButtonBase } from "@mui/material";
 import axios from "axios";
@@ -7,6 +14,7 @@ import Geocoder from "react-map-gl-geocoder";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import { UserContext } from "../context/user-context";
 import AddEventForm from "./AddEventForm";
 import EventAddPopup from "./EventAddPopup";
 import EventMarkerPin from "./EventMarkerPin";
@@ -19,6 +27,8 @@ const geolocateControlStyle = {
 };
 
 export default function Map() {
+  const { setHamburgerIsOpen } = useContext(UserContext);
+
   const [viewport, setViewPort] = useState({
     latitude: 37.7577,
     longitude: -122.4376,
@@ -155,6 +165,9 @@ export default function Map() {
         mapStyle="mapbox://styles/mapbox/streets-v11"
         width="100%"
         height="100%"
+        onMouseDown={() => {
+          setHamburgerIsOpen(false);
+        }}
       >
         {!isOpen && (
           <EventMarkerPin

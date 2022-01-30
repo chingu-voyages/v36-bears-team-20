@@ -5,6 +5,7 @@ const UserContext = React.createContext(null);
 function UserContextProvider(props) {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hamburgerIsOpen, setHamburgerIsOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -28,6 +29,8 @@ function UserContextProvider(props) {
         isLoggedIn,
         setIsLoggedIn,
         handleSignOut,
+        hamburgerIsOpen,
+        setHamburgerIsOpen,
       }}
     >
       {props.children}

@@ -5,6 +5,7 @@ import axios from "axios";
 import MapGL, { GeolocateControl, Marker } from "react-map-gl";
 import Geocoder from "react-map-gl-geocoder";
 
+import "mapbox-gl/dist/mapbox-gl.css";
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import AddEventForm from "./AddEventForm";
 import EventAddPopup from "./EventAddPopup";
@@ -134,7 +135,10 @@ export default function Map() {
   );
 
   return (
-    <div className="relative flex flex-col justify-center items-center">
+    <div
+      className="relative flex flex-col justify-center items-center"
+      style={{ height: "100vh" }}
+    >
       {!isOpen && <MapHeader handleDropPin={handleDropPin} />}
       <AddEventForm
         isOpen={isOpen}
@@ -150,7 +154,7 @@ export default function Map() {
         mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v11"
         width="100%"
-        height="99vh"
+        height="100%"
       >
         {!isOpen && (
           <EventMarkerPin

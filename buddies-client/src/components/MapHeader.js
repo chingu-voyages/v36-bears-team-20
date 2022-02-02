@@ -4,7 +4,7 @@ import HamburgerImg from "../images/hamburger.png";
 import { UserContext } from "../context/user-context";
 
 export default function MapHeader(props) {
-  const { isLoggedIn, handleSignOut } = useContext(UserContext);
+  const { user, handleSignOut } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
   return (
     <header className="my-3 flex justify-center items-center absolute bottom-10 left-5 z-10">
@@ -38,7 +38,7 @@ export default function MapHeader(props) {
                 Home
               </a>
             </li>
-            {isLoggedIn ? (
+            {user ? (
               <>
                 <li>
                   <a

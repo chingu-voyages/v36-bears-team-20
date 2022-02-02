@@ -1,30 +1,29 @@
-const router = require("express").Router();
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
+const { celebrate, Joi, Segments } = require("celebrate");
+const asyncHandler  = require('express-async-handler');
 const express = require("express");
-const BodyParser = require("body-parser");
-const { celebrate, Joi, errors, Segments } = require("celebrate");
+const bcrypt = require("bcrypt");
 
-const app = express();
-app.use(BodyParser.json());
-//Register9
+const User = require("../models/User");
+const { generateToken, ensureValid } = require("../lib/auth");
+
+const router = express.Router();
 
 router.post(
   "/register",
   celebrate({
-    body: Joi.object().keys({
+    [Segments.BODY]: Joi.object().keys({
       username: Joi.string().min(4).max(20).required(),
       email: Joi.string().lowercase().email(),
       password: Joi.string().min(6).max(40).required(),
     }),
   }),
-  async (req, res) => {
+  asyncHandler(async (req, res) => {
     try {
-      // password generatorno
+      // password generator
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-      // create new users
+      // create a new user
       const newUser = new User({
         username: req.body.username,
         email: req.body.email,
@@ -33,37 +32,78 @@ router.post(
 
       // save user
       const user = await newUser.save();
-      res.status(200).json(user);
+
+      const token = generateToken({
+        id: user._id,
+        username: user.username,
+        isAdmin: user.isAdmin
+      }, { expiresIn: "7 days" });
+
+      return res.status(200).json({ token })
     } catch (err) {
       if (err.code === 11000) {
         const response = {
           message: "a user with the same username and/or email already exists"
         };
 
-        res.status(409).json(response);
+        return res.status(409).json(response);
       } else {
-        res.status(500).json(err);
+        throw err;
       }
     }
-  }
+  })
 );
 
 // login
-router.post("/login", async (req, res) => {
-  try {
+router.post("/login", 
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      email: Joi.string().lowercase().email(),
+      password: Joi.string().min(6).max(40).required(),
+    }),
+  }),
+  asyncHandler(async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
-    !user && res.status(404).send("user not found");
+
+    if (!user) {
+      return res.status(404).send("user not found");
+    }
 
     const validPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
-    !validPassword && res.status(400).json("wrong password");
 
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json();
-  }
-});
+    if (!validPassword) {
+      return res.status(400).json("wrong password");
+    }
+
+    const token = generateToken({
+      id: user._id,
+      username: user.username,
+      isAdmin: user.isAdmin
+    }, { expiresIn: "7 days" });
+
+    return res.status(200).json({ token })
+  })
+);
+
+// verify
+router.post("/verify",
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      token: Joi.string().required(),
+    }),
+  }),
+  asyncHandler(async (req, res) => {
+    try {
+      const payload = ensureValid(req.body.token);
+
+      return res.status(200).json(payload);
+    } catch(err) {
+      return res.status(400).send("jwt is not valid")
+    }
+  })
+);
 
 module.exports = router;

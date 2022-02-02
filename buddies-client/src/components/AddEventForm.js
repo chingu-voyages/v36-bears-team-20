@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { UserContext } from "../context/user-context";
 import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
+import { useNavigate } from "react-router-dom";
 import EventType from "./EventType";
 import axios from "axios";
 
@@ -12,7 +13,7 @@ export default function AddEventForm({
   setEventMarkers,
   setShowPin,
 }) {
-  const { user } = useContext(UserContext);
+  const { token, setToken } = useContext(UserContext);
   const [formEventType, setFormEventType] = useState();
   const [eventTypes, setEventTypes] = useState([
     { type: "party", isSelected: false },
@@ -25,6 +26,7 @@ export default function AddEventForm({
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState();
+  const navigate = useNavigate();
 
   const setDefaults = () => {
     setTitle("");
@@ -52,8 +54,7 @@ export default function AddEventForm({
         date: date,
         location: [location.latitude, location.longitude],
         activity: formEventType,
-        userId: user._id,
-      })
+      }, { headers: {"Authorization": `Bearer ${token}`} })
       .then((response) => {
         toast.success("Event added successfully!");
         setEventMarkers((prev) => {
@@ -67,7 +68,20 @@ export default function AddEventForm({
         if (response.data._message === "Event validation failed") {
           toast.error("Please enter all required fields and try again.");
         } else {
-          toast.error("Unknown error occurred! Please try again.");
+          let message = "";
+
+          switch(response.status) {
+            case 401:
+              message = "Invalid session. Please relogin and try again.";
+              setToken("")
+              navigate("/login")
+              break;
+
+            default:
+              message = "Unknown error occurred."
+          }
+
+          toast.error(message);
         }
       });
   };

@@ -10,13 +10,13 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
-  <BrowserRouter>
-    <React.StrictMode>
-      <UserContextProvider>
-        <App />
-      </UserContextProvider>
-    </React.StrictMode>
-  </BrowserRouter>,
+    <BrowserRouter>
+      <React.StrictMode>
+        <UserContextProvider>
+            <App />
+        </UserContextProvider>
+      </React.StrictMode>
+    </BrowserRouter>,
   document.getElementById("root")
 );
 

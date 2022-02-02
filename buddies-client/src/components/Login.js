@@ -10,7 +10,7 @@ export default function Login() {
   const email = useRef();
   const password = useRef();
   const navigate = useNavigate();
-  const { setUser, user } = useContext(UserContext);
+  const { user, setToken } = useContext(UserContext);
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -20,11 +20,11 @@ export default function Login() {
         password: password.current.value,
       })
       .then((response) => {
-        setUser(response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
+        setToken(response.data.token);
         navigate("/map");
       })
       .catch((error) => {
+        console.log(error)
         toast.error("Wrong credentials");
       });
   };

@@ -3,8 +3,6 @@ import MapGL, { GeolocateControl, Marker } from "react-map-gl";
 import Geocoder from "react-map-gl-geocoder";
 import axios from "axios";
 
-import Pin from "./Pin";
-
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import MapHeader from "./MapHeader";
 import AddEventForm from "./AddEventForm";

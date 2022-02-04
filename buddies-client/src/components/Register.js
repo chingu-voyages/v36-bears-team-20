@@ -37,13 +37,8 @@ function Register() {
     setServerState({ ok, msg });
   };
   const handleSubmit = (values, actions) => {
-    axios({
-      method: "POST",
-      url: `${
-        process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
-      }/api/auth/register`,
-      data: values,
-    })
+    axios
+      .post("http://localhost:8000/api/auth/register", values)
       .then((response) => {
         actions.setSubmitting(false);
         actions.resetForm();

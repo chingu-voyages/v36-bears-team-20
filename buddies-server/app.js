@@ -1,26 +1,22 @@
-var path = require("path");
-
-const bodyParser = require("body-parser");
-const { errors } = require("celebrate");
-var cookieParser = require("cookie-parser");
-const cors = require("cors");
-const dotenv = require("dotenv");
-var express = require("express");
+const cookieParser = require("cookie-parser")
+const createError = require("http-errors");
+const { errors } = require('celebrate');
+const express = require("express");
 const helmet = require("helmet");
-var createError = require("http-errors");
+const logger = require("morgan");
+const cors = require("cors");
+
 const mongoose = require("mongoose");
-var logger = require("morgan");
-const morgan = require("morgan");
-const yup = require("yup");
+const path = require("path");
 
 const authRoute = require("./routes/auth");
-const eventRoute = require("./routes/event");
 const userRoute = require("./routes/users");
+const eventRoute = require("./routes/event");
 
-dotenv.config();
+const config = require("./config");
 
 mongoose.connect(
-  process.env.MONGO_URL,
+  config.MONGO_URL,
   { useNewUrlParser: true, useUnifiedTopology: true },
   () => {
     console.log("Connected to MongoDB");
@@ -33,27 +29,23 @@ const corsOptions = {
   optionSuccessStatus: 200,
 };
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
-app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(logger(config.NODE_ENV === "production" ? "combined" : "dev"));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(cors(corsOptions));
-
 //middleware
+app.use(express.urlencoded({ extended: false }));
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
 app.use(helmet());
-app.use(morgan("common"));
-app.listen(process.env.PORT || 8000, () => {
-  console.log("Backend server is running!");
-});
-app.use(bodyParser.json());
+
+// routes
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/events", eventRoute);
@@ -76,6 +68,10 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render("error");
+});
+
+app.listen(8000, () => {
+  console.log("Backend server is running!");
 });
 
 module.exports = app;

@@ -4,7 +4,7 @@ import { UserContext } from "../context/user-context";
 import BlankProfile from "../images/blankProfile.png";
 
 function Navbar() {
-  const { isLoggedIn, handleSignOut } = useContext(UserContext);
+  const { user, handleSignOut } = useContext(UserContext);
 
   const [isExpanded, setExpand] = useState(false);
 
@@ -39,7 +39,7 @@ function Navbar() {
                 </a>
               </div>
               <div className="flex items-center mt-1 md:mt-0">
-                {isLoggedIn ? (
+                {user ? (
                   <div className="ml-3 relative">
                     <>
                       <button

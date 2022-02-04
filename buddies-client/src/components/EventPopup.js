@@ -15,7 +15,7 @@ import TalkImg from "../images/talk.png";
 
 export default function EventPopup({ currentEventId, togglePopup }) {
   const [eventOwner, setEventOwner] = useState(null);
-  const { user, isLoggedIn } = useContext(UserContext);
+  const { user, token, setToken } = useContext(UserContext);
   const [eventData, setEventData] = useState(null);
   const navigate = useNavigate();
 
@@ -51,15 +51,12 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   };
 
   const handleJoinEvent = () => {
-    if (isLoggedIn) {
+    if (token) {
       axios
         .put(
-          `${
-            process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
-          }/api/events/join/${currentEventId}`,
-          {
-            user: user,
-          }
+          `http://localhost:8000/api/events/join/${currentEventId}`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
         )
         .then((response) => {
           setEventData(response.data);
@@ -70,7 +67,20 @@ export default function EventPopup({ currentEventId, togglePopup }) {
           });
         })
         .catch(({ response }) => {
-          toast.error(response.data, {
+          let message = "";
+
+          switch (response.status) {
+            case 401:
+              message = "Invalid session. Please relogin and try again.";
+              setToken("");
+              navigate("/login");
+              break;
+
+            default:
+              message = "Unknown error occurred.";
+          }
+
+          toast.error(message, {
             toastId: "event_join_error",
           });
         });
@@ -82,12 +92,9 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   const handleLeaveEvent = () => {
     axios
       .put(
-        `${
-          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
-        }/api/events/leave/${currentEventId}`,
-        {
-          user: user,
-        }
+        `http://localhost:8000/api/events/leave/${currentEventId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((response) => {
         setEventData(response.data);
@@ -98,7 +105,20 @@ export default function EventPopup({ currentEventId, togglePopup }) {
         });
       })
       .catch(({ response }) => {
-        toast.error(response.data, {
+        let message = "";
+
+        switch (response.status) {
+          case 401:
+            message = "Invalid session. Please relogin and try again.";
+            setToken("");
+            navigate("/login");
+            break;
+
+          default:
+            message = "Unknown error occurred.";
+        }
+
+        toast.error(message, {
           toastId: "event_left_error",
         });
       });
@@ -153,7 +173,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                   <PeopleIcon />
                 </Badge>
               </IconButton>
-              {isLoggedIn ? (
+              {user ? (
                 <>
                   {eventData.guests.includes(user._id) ? (
                     <button

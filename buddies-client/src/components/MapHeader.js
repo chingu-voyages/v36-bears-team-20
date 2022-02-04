@@ -8,7 +8,7 @@ import Fab from "@mui/material/Fab";
 import { UserContext } from "../context/user-context";
 
 export default function MapHeader(props) {
-  const { isLoggedIn, handleSignOut, hamburgerIsOpen, setHamburgerIsOpen } =
+  const { user, handleSignOut, hamburgerIsOpen, setHamburgerIsOpen } =
     useContext(UserContext);
 
   return (
@@ -58,7 +58,7 @@ export default function MapHeader(props) {
         >
           <ul className="py-1" aria-labelledby="dropdownTopButton">
             {[
-              { label: "Home", href: "/", isLoggedIn: isLoggedIn }, // Always show 'Home' option regardless of isLoggedIn status.
+              { label: "Home", href: "/", isLoggedIn: user }, // Always show 'Home' option regardless of isLoggedIn status.
               { label: "Profile", href: "/profile", isLoggedIn: true },
               {
                 label: "Sign Out",
@@ -68,7 +68,7 @@ export default function MapHeader(props) {
               },
               { label: "Sign In", href: "/login", isLoggedIn: false },
             ]
-              .filter((option) => option.isLoggedIn === isLoggedIn)
+              .filter((option) => option.isLoggedIn === user)
               .map((option) => {
                 return (
                   <li key={option.label}>

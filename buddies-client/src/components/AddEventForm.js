@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 
 import axios from "axios";
 import DatePicker from "react-datepicker";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { UserContext } from "../context/user-context";
@@ -15,7 +16,7 @@ export default function AddEventForm({
   setShowPin,
 }) {
   const eventTypes_ = ["party", "drink", "coffee", "talk", "walk", "sports"];
-  const { user } = useContext(UserContext);
+  const { token, setToken } = useContext(UserContext);
   const [formEventType, setFormEventType] = useState();
   const [eventTypes, setEventTypes] = useState(
     eventTypes_.map((type) => {
@@ -25,6 +26,7 @@ export default function AddEventForm({
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState();
+  const navigate = useNavigate();
 
   const setDefaults = () => {
     setTitle("");
@@ -45,16 +47,14 @@ export default function AddEventForm({
     event.preventDefault();
     axios
       .post(
-        `${
-          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
-        }/api/events`,
+        "http://localhost:8000/api/events",
         {
           name: title,
           date: date,
           location: [location.latitude, location.longitude],
           activity: formEventType,
-          userId: user._id,
-        }
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((response) => {
         toast.dismiss();
@@ -75,9 +75,20 @@ export default function AddEventForm({
             toastId: "enter_all_required_fields",
           });
         } else {
-          toast.error("Unknown error occurred! Please try again.", {
-            toastId: "unknown_error",
-          });
+          let message = "";
+
+          switch (response.status) {
+            case 401:
+              message = "Invalid session. Please relogin and try again.";
+              setToken("");
+              navigate("/login");
+              break;
+
+            default:
+              message = "Unknown error occurred.";
+          }
+
+          toast.error(message);
         }
       });
   };

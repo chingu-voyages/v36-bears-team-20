@@ -147,7 +147,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
               </i>
               {user ? (
                 <div>
-                  {eventData.guests.includes(user.id) ? (
+                  {eventData.guests.includes(user._id) ? (
                     <button
                       className="bg-red-500 text-white text-sm rounded font-bold px-3 py-1"
                       onClick={handleLeaveEvent}

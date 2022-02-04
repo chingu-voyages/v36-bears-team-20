@@ -34,7 +34,7 @@ router.post(
       const user = await newUser.save();
 
       const token = generateToken({
-        id: user._id,
+        _id: user._id,
         username: user.username,
         isAdmin: user.isAdmin
       }, { expiresIn: "7 days" });
@@ -79,7 +79,7 @@ router.post("/login",
     }
 
     const token = generateToken({
-      id: user._id,
+      _id: user._id,
       username: user.username,
       isAdmin: user.isAdmin
     }, { expiresIn: "7 days" });

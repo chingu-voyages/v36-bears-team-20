@@ -5,9 +5,9 @@ const jwt = require("jsonwebtoken");
 const { compose } = require("./utils");
 const config = require("../config");
 
-const generateToken = ({ id, username, isAdmin }, { expiresIn }) => {
+const generateToken = ({ _id, username, isAdmin }, { expiresIn }) => {
     const payload = {
-        id,
+        _id,
         username,
         permissions: isAdmin ? "admin user" : "user"
     };

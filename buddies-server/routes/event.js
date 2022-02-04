@@ -19,7 +19,7 @@ router.post("/",
     }),
   }),
   asyncHandler(async (req, res) => {
-    req.body.userId = req.user.id;
+    req.body.userId = req.user._id;
     const newEvent = new Event(req.body);
     const savedEvent = await newEvent.save();
 
@@ -41,7 +41,7 @@ router.put("/:id",
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
 
-    if (event.userId === req.user.id) {
+    if (event.userId === req.user._id) {
       await event.updateOne({ $set: req.body });
 
       return res.status(200).json("you updated your event");
@@ -56,7 +56,7 @@ router.put("/join/:id",
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     if (!event.guests.includes(userId)) {
       event.guests.push(userId);
@@ -74,7 +74,7 @@ router.put("/leave/:id",
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     if (event.guests.includes(userId)) {
       event.guests.splice(event.guests.indexOf(userId), 1);
@@ -93,7 +93,7 @@ router.delete("/:id",
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
 
-    if (event.userId === req.user.id) {
+    if (event.userId === req.user._id) {
       await event.deleteOne();
 
       return res.status(200).json("event has been deleted");

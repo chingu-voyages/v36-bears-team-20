@@ -7,13 +7,13 @@ import {
   useContext,
 } from "react";
 
+import "mapbox-gl/dist/mapbox-gl.css";
+import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { ButtonBase } from "@mui/material";
 import axios from "axios";
 import MapGL, { GeolocateControl, Marker } from "react-map-gl";
 import Geocoder from "react-map-gl-geocoder";
 
-import "mapbox-gl/dist/mapbox-gl.css";
-import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { UserContext } from "../context/user-context";
 import AddEventForm from "./AddEventForm";
 import EventAddPopup from "./EventAddPopup";
@@ -149,14 +149,6 @@ export default function Map() {
       className="relative flex flex-col justify-center items-center"
       style={{ height: "100vh" }}
     >
-      {!isOpen && <MapHeader handleDropPin={handleDropPin} />}
-      <AddEventForm
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        location={marker}
-        setEventMarkers={setEventMarkers}
-        setShowPin={setShowPin}
-      />
       <MapGL
         ref={mapRef}
         {...viewport}
@@ -169,6 +161,14 @@ export default function Map() {
           setHamburgerIsOpen(false);
         }}
       >
+        {!isOpen && <MapHeader handleDropPin={handleDropPin} />}
+        <AddEventForm
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          location={marker}
+          setEventMarkers={setEventMarkers}
+          setShowPin={setShowPin}
+        />
         {!isOpen && (
           <EventMarkerPin
             marker={marker}

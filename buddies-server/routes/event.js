@@ -1,6 +1,6 @@
 const { celebrate, Joi, Segments } = require("celebrate");
-const asyncHandler  = require('express-async-handler');
 const express = require("express");
+const asyncHandler = require("express-async-handler");
 
 const { requiresRole } = require("../lib/auth");
 const Event = require("../models/Event");
@@ -8,7 +8,8 @@ const Event = require("../models/Event");
 const router = express.Router();
 
 // create event
-router.post("/",
+router.post(
+  "/",
   requiresRole("user"),
   celebrate({
     [Segments.BODY]: Joi.object().keys({
@@ -28,7 +29,8 @@ router.post("/",
 );
 
 // update event
-router.put("/:id", 
+router.put(
+  "/:id",
   requiresRole("user"),
   celebrate({
     [Segments.BODY]: Joi.object().keys({
@@ -52,7 +54,8 @@ router.put("/:id",
 );
 
 // join event
-router.put("/join/:id",
+router.put(
+  "/join/:id",
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
@@ -70,7 +73,8 @@ router.put("/join/:id",
 );
 
 // leave event
-router.put("/leave/:id",
+router.put(
+  "/leave/:id",
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
@@ -88,7 +92,8 @@ router.put("/leave/:id",
 );
 
 // delete event
-router.delete("/:id",
+router.delete(
+  "/:id",
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
@@ -104,17 +109,23 @@ router.delete("/:id",
 );
 
 // get Event
-router.get("/:id", asyncHandler(async (req, res) => {
-  const event = await Event.findById(req.params.id);
+router.get(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const event = await Event.findById(req.params.id);
 
-  return res.status(200).json(event);
-}));
+    return res.status(200).json(event);
+  })
+);
 
 // get Events
-router.get("/", asyncHandler(async (req, res) => {
-  const events = await Event.find();
+router.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const events = await Event.find();
 
-  return res.status(200).json(events);
-}));
+    return res.status(200).json(events);
+  })
+);
 
 module.exports = router;

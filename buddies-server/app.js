@@ -1,19 +1,18 @@
-const cookieParser = require("cookie-parser")
-const createError = require("http-errors");
-const { errors } = require('celebrate');
-const express = require("express");
-const helmet = require("helmet");
-const logger = require("morgan");
-const cors = require("cors");
-
-const mongoose = require("mongoose");
 const path = require("path");
 
-const authRoute = require("./routes/auth");
-const userRoute = require("./routes/users");
-const eventRoute = require("./routes/event");
+const { errors } = require("celebrate");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const express = require("express");
+const helmet = require("helmet");
+const createError = require("http-errors");
+const mongoose = require("mongoose");
+const logger = require("morgan");
 
 const config = require("./config");
+const authRoute = require("./routes/auth");
+const eventRoute = require("./routes/event");
+const userRoute = require("./routes/users");
 
 mongoose.connect(
   config.MONGO_URL,

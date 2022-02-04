@@ -1,16 +1,20 @@
-const asyncHandler  = require('express-async-handler');
-const express = require("express");
 const bcrypt = require("bcrypt");
+const express = require("express");
+const asyncHandler = require("express-async-handler");
 const router = express.Router();
 
-const { requiresRole } = require("../lib/auth")
+const { requiresRole } = require("../lib/auth");
 const User = require("../models/User");
 
 // update user
-router.put("/:id",
+router.put(
+  "/:id",
   requiresRole("user"),
   asyncHandler(async (req, res) => {
-    if (req.user.id === req.params.id || req.user.permissions.includes("admin")) {
+    if (
+      req.user.id === req.params.id ||
+      req.user.permissions.includes("admin")
+    ) {
       if (req.body.password) {
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
@@ -28,10 +32,14 @@ router.put("/:id",
 );
 
 //delete user
-router.delete("/:id", 
+router.delete(
+  "/:id",
   requiresRole("user"),
   asyncHandler(async (req, res) => {
-    if (req.user.id === req.params.id || req.user.permissions.includes("admin")) {
+    if (
+      req.user.id === req.params.id ||
+      req.user.permissions.includes("admin")
+    ) {
       await User.findByIdAndDelete(req.params.id);
       return res.status(200).json("Account has been deleted");
     } else {
@@ -41,15 +49,19 @@ router.delete("/:id",
 );
 
 //get a user
-router.get("/:id", asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
-  const { password, updatedAt, ...other } = user._doc;
+router.get(
+  "/:id",
+  asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    const { password, updatedAt, ...other } = user._doc;
 
-  return res.status(200).json(other);
-}));
+    return res.status(200).json(other);
+  })
+);
 
 // follow a user
-router.put("/:id/follow", 
+router.put(
+  "/:id/follow",
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     if (req.user.id !== req.params.id) {
@@ -70,7 +82,8 @@ router.put("/:id/follow",
 );
 
 // unfollow a user
-router.put("/:id/unfollow", 
+router.put(
+  "/:id/unfollow",
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     if (req.body.userId !== req.params.id) {

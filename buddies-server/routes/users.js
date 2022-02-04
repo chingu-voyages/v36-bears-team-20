@@ -65,7 +65,7 @@ router.put("/:id/follow",
         return res.status(403).json("you already follow this user");
       }
     } else {
-      returnres.status(403).json("you cant follow yourself");
+      return res.status(403).json("you cant follow yourself");
     }
   })
 );

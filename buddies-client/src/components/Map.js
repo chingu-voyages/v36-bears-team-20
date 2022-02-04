@@ -7,8 +7,6 @@ import {
   useContext,
 } from "react";
 
-import "mapbox-gl/dist/mapbox-gl.css";
-import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { ButtonBase } from "@mui/material";
 import axios from "axios";
 import MapGL, { GeolocateControl, Marker } from "react-map-gl";
@@ -20,6 +18,9 @@ import EventAddPopup from "./EventAddPopup";
 import EventMarkerPin from "./EventMarkerPin";
 import EventPopup from "./EventPopup";
 import MapHeader from "./MapHeader";
+
+import "mapbox-gl/dist/mapbox-gl.css";
+import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 const geolocateControlStyle = {
   right: 10,

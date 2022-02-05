@@ -1,11 +1,17 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { Popup } from "react-map-gl";
-import moment from "moment";
-import TalkImg from "../images/talk.png";
-import { UserContext } from "../context/user-context";
+
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import PeopleIcon from "@mui/icons-material/People";
+import Badge from "@mui/material/Badge";
+import IconButton from "@mui/material/IconButton";
 import axios from "axios";
+import moment from "moment";
+import { Popup } from "react-map-gl";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+import { UserContext } from "../context/user-context";
+import TalkImg from "../images/talk.png";
 
 export default function EventPopup({ currentEventId, togglePopup }) {
   const [eventOwner, setEventOwner] = useState(null);
@@ -15,7 +21,11 @@ export default function EventPopup({ currentEventId, togglePopup }) {
 
   const getEventOwner = (event) => {
     axios
-      .get(`http://localhost:8000/api/users/${event.userId}`)
+      .get(
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/users/${event.userId}`
+      )
       .then((response) => {
         setEventOwner(response.data);
       })
@@ -26,7 +36,11 @@ export default function EventPopup({ currentEventId, togglePopup }) {
 
   const getEventData = () => {
     axios
-      .get(`http://localhost:8000/api/events/${currentEventId}`)
+      .get(
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/events/${currentEventId}`
+      )
       .then((response) => {
         setEventData(response.data);
         getEventOwner(response.data);
@@ -39,29 +53,36 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   const handleJoinEvent = () => {
     if (token) {
       axios
-        .put(`http://localhost:8000/api/events/join/${currentEventId}`, 
+        .put(
+          `http://localhost:8000/api/events/join/${currentEventId}`,
           {},
-          { headers: {"Authorization": `Bearer ${token}`} }
+          { headers: { Authorization: `Bearer ${token}` } }
         )
         .then((response) => {
           setEventData(response.data);
-          toast.success("You joined the event!");
+          toast.dismiss();
+          toast.clearWaitingQueue();
+          toast.success("You joined the event!", {
+            toastId: "event_join",
+          });
         })
         .catch(({ response }) => {
           let message = "";
 
-          switch(response.status) {
+          switch (response.status) {
             case 401:
               message = "Invalid session. Please relogin and try again.";
-              setToken("")
-              navigate("/login")
+              setToken("");
+              navigate("/login");
               break;
 
             default:
-              message = "Unknown error occurred."
+              message = "Unknown error occurred.";
           }
 
-          toast.error(message);
+          toast.error(message, {
+            toastId: "event_join_error",
+          });
         });
     } else {
       navigate("/login");
@@ -70,29 +91,36 @@ export default function EventPopup({ currentEventId, togglePopup }) {
 
   const handleLeaveEvent = () => {
     axios
-      .put(`http://localhost:8000/api/events/leave/${currentEventId}`, 
+      .put(
+        `http://localhost:8000/api/events/leave/${currentEventId}`,
         {},
-        { headers: {"Authorization": `Bearer ${token}`} }
+        { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((response) => {
         setEventData(response.data);
-        toast.success("You left the event!");
+        toast.dismiss();
+        toast.clearWaitingQueue();
+        toast.success("You left the event!", {
+          toastId: "event_left",
+        });
       })
       .catch(({ response }) => {
         let message = "";
 
-        switch(response.status) {
+        switch (response.status) {
           case 401:
             message = "Invalid session. Please relogin and try again.";
-            setToken("")
-            navigate("/login")
+            setToken("");
+            navigate("/login");
             break;
 
           default:
-            message = "Unknown error occurred."
+            message = "Unknown error occurred.";
         }
 
-        toast.error(message);
+        toast.error(message, {
+          toastId: "event_left_error",
+        });
       });
   };
 
@@ -100,9 +128,9 @@ export default function EventPopup({ currentEventId, togglePopup }) {
     getEventData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  console.log({ eventData, user });
   return (
-    <div>
+    <>
       {eventData && (
         <Popup
           latitude={eventData.location[0]}
@@ -140,13 +168,13 @@ export default function EventPopup({ currentEventId, togglePopup }) {
               <p>{eventData.activity}</p>
             </div>
             <div className="flex justify-between text-2xl text-blue-500 mt-1">
-              <i className="fas fa-user-friends relative">
-                <div className="absolute bottom-4 left-5 font-sans w-5 h-5 rounded-full bg-red-500 text-white text-xs flex justify-center items-center px-1 py-1">
-                  {eventData.guests.length}
-                </div>
-              </i>
+              <IconButton aria-label="guests">
+                <Badge badgeContent={eventData.guests.length} color="secondary">
+                  <PeopleIcon />
+                </Badge>
+              </IconButton>
               {user ? (
-                <div>
+                <>
                   {eventData.guests.includes(user._id) ? (
                     <button
                       className="bg-red-500 text-white text-sm rounded font-bold px-3 py-1"
@@ -162,7 +190,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                       Join
                     </button>
                   )}
-                </div>
+                </>
               ) : (
                 <button
                   className="bg-blue-500 text-white text-sm rounded font-bold px-3 py-1"
@@ -171,12 +199,20 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                   Join
                 </button>
               )}
-
-              <i className="fas fa-comments"></i>
+              <IconButton
+                aria-label="chat"
+                onClick={() => {
+                  console.log("show chat");
+                }}
+              >
+                <Badge badgeContent={0} color="info">
+                  <ChatBubbleIcon />
+                </Badge>
+              </IconButton>
             </div>
           </div>
         </Popup>
       )}
-    </div>
+    </>
   );
 }

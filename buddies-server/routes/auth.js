@@ -1,10 +1,10 @@
-const { celebrate, Joi, Segments } = require("celebrate");
-const asyncHandler  = require('express-async-handler');
-const express = require("express");
 const bcrypt = require("bcrypt");
+const { celebrate, Joi, Segments } = require("celebrate");
+const express = require("express");
+const asyncHandler = require("express-async-handler");
 
-const User = require("../models/User");
 const { generateToken, ensureValid } = require("../lib/auth");
+const User = require("../models/User");
 
 const router = express.Router();
 
@@ -33,17 +33,20 @@ router.post(
       // save user
       const user = await newUser.save();
 
-      const token = generateToken({
-        _id: user._id,
-        username: user.username,
-        isAdmin: user.isAdmin
-      }, { expiresIn: "7 days" });
+      const token = generateToken(
+        {
+          _id: user._id,
+          username: user.username,
+          isAdmin: user.isAdmin,
+        },
+        { expiresIn: "7 days" }
+      );
 
-      return res.status(200).json({ token })
+      return res.status(200).json({ token });
     } catch (err) {
       if (err.code === 11000) {
         const response = {
-          message: "a user with the same username and/or email already exists"
+          message: "a user with the same username and/or email already exists",
         };
 
         return res.status(409).json(response);
@@ -55,7 +58,8 @@ router.post(
 );
 
 // login
-router.post("/login", 
+router.post(
+  "/login",
   celebrate({
     [Segments.BODY]: Joi.object().keys({
       email: Joi.string().lowercase().email(),
@@ -84,12 +88,13 @@ router.post("/login",
       isAdmin: user.isAdmin
     }, { expiresIn: "7 days" });
 
-    return res.status(200).json({ token })
+    return res.status(200).json({ token });
   })
 );
 
 // verify
-router.post("/verify",
+router.post(
+  "/verify",
   celebrate({
     [Segments.BODY]: Joi.object().keys({
       token: Joi.string().required(),
@@ -100,8 +105,8 @@ router.post("/verify",
       const payload = ensureValid(req.body.token);
 
       return res.status(200).json(payload);
-    } catch(err) {
-      return res.status(400).send("jwt is not valid")
+    } catch (err) {
+      return res.status(400).send("jwt is not valid");
     }
   })
 );

@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
+
 import { UserContext } from "../context/user-context";
 import BlankProfile from "../images/blankProfile.png";
 
 function Navbar() {
   const { user, handleSignOut } = useContext(UserContext);
 
-  const [ isExpanded, setExpand ] = useState(false);
+  const [isExpanded, setExpand] = useState(false);
 
   return (
     <header>
@@ -38,35 +39,50 @@ function Navbar() {
                 </a>
               </div>
               <div className="flex items-center mt-1 md:mt-0">
-                {user ? <>
+                {user ? (
                   <div className="ml-3 relative">
-                    <div>
-                      <button type="button" className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-haspopup="true"
+                    <>
+                      <button
+                        type="button"
+                        className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                        id="user-menu-button"
+                        aria-haspopup="true"
                         aria-expanded={isExpanded ? "true" : "false"}
                         onClick={() => setExpand((state) => !state)}
                         onBlur={() => setTimeout(() => setExpand(false), 100)}
                       >
                         <span className="sr-only">Open user menu</span>
-                        <img className="h-8 w-8 rounded-full" src={BlankProfile} alt="Profile picture" />
+                        <img
+                          className="h-8 w-8 rounded-full"
+                          src={BlankProfile}
+                          alt="User Profile"
+                        />
                       </button>
-                    </div>
-                    <div className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none ${
-                      isExpanded ? "transition ease-out duration-100 transform opacity-100 scale-100"
-                        : "transition ease-in duration-75 transform opacity-0 scale-0"
-                      }`} role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1"
+                    </>
+                    <div
+                      className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none ${
+                        isExpanded
+                          ? "transition ease-out duration-100 transform opacity-100 scale-100"
+                          : "transition ease-in duration-75 transform opacity-0 scale-0"
+                      }`}
+                      role="menu"
+                      aria-orientation="vertical"
+                      aria-labelledby="user-menu-button"
+                      tabIndex="-1"
                     >
-                      <a href="/profile" role="menuitem" tabindex="-1">
+                      <a href="/profile" role="menuitem" tabIndex="-1">
                         <button className="block px-4 py-2 text-sm text-gray-700">
                           My Profile
                         </button>
                       </a>
-                      <a href="/map" role="menuitem" tabindex="-1">
+                      <a href="/map" role="menuitem" tabIndex="-1">
                         <button className="block px-4 py-2 text-sm text-gray-700">
                           Map
                         </button>
                       </a>
                       <button
-                        role="menuitem" tabindex="-1"
+                        role="menuitem"
+                        tabIndex="-1"
                         onClick={handleSignOut}
                         className="block px-4 py-2 text-sm text-gray-700"
                       >
@@ -74,7 +90,7 @@ function Navbar() {
                       </button>
                     </div>
                   </div>
-                </> : (
+                ) : (
                   <a href="/login">
                     <button className="bg-yellow-400 text-white px-4 py-2 rounded mx-4 uppercase shadow-xl hover:bg-yellow-500 font-bold">
                       Sign in

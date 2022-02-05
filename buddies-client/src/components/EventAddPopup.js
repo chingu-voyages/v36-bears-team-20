@@ -1,7 +1,9 @@
 import { useContext } from "react";
+
 import { Popup } from "react-map-gl";
-import { UserContext } from "../context/user-context";
 import { useNavigate } from "react-router-dom";
+
+import { UserContext } from "../context/user-context";
 
 export default function EventAddPopup({
   marker,

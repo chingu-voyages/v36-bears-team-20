@@ -1,4 +1,5 @@
 import { Marker } from "react-map-gl";
+
 import Pin from "./Pin";
 
 export default function EventMarkerPin({

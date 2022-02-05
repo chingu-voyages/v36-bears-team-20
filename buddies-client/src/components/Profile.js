@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import ProfileBgImg from "../images/profile-bg.png";
-import { UserContext } from "../context/user-context";
-import { toast } from "react-toastify";
+
 import axios from "axios";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import Navbar from "../components/Navbar";
+import { UserContext } from "../context/user-context";
+import ProfileBgImg from "../images/profile-bg.png";
 
 function Profile() {
   const { user, token, setToken } = useContext(UserContext);
@@ -23,21 +25,21 @@ function Profile() {
         .catch(({ response }) => {
           let message = "";
 
-          switch(response.status) {
+          switch (response.status) {
             case 401:
               message = "Invalid session. Please relogin and try again.";
-              setToken("")
-              navigate("/login")
+              setToken("");
+              navigate("/login");
               break;
 
             default:
-              message = "Unknown error occurred."
+              message = "Unknown error occurred.";
           }
 
           toast.error(message);
         });
     }
-  }, [user, token]);
+  }, [user, token, navigate, setToken]);
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} />;
@@ -62,7 +64,7 @@ function Profile() {
                   type="text"
                   placeholder="Username"
                   id="loginInput"
-                  value={profile.username}
+                  defaultValue={profile.username}
                 />
 
                 <input
@@ -70,7 +72,7 @@ function Profile() {
                   type="email"
                   required
                   className="loginInput"
-                  value={profile.email}
+                  defaultValue={profile.email}
                 />
 
                 <input

@@ -1,14 +1,16 @@
-import createPersistedState from 'use-persisted-state';
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import createPersistedState from "use-persisted-state";
 
 const UserContext = React.createContext(null);
-const useToken = createPersistedState('token');
-const useUser = createPersistedState('user');
+const useToken = createPersistedState("token");
+const useUser = createPersistedState("user");
 
 function UserContextProvider(props) {
+  const [hamburgerIsOpen, setHamburgerIsOpen] = useState(false);
   const [token, setToken] = useToken("");
   const [user, setUser] = useUser(null);
   const navigate = useNavigate();
@@ -28,7 +30,7 @@ function UserContextProvider(props) {
     } else if (!token && user) {
       setUser(null);
     }
-  }, [user, token]);
+  }, [user, token, setUser, navigate, setToken]);
 
   const handleSignOut = () => {
     setToken("");
@@ -41,6 +43,8 @@ function UserContextProvider(props) {
         setToken,
         user,
         handleSignOut,
+        hamburgerIsOpen,
+        setHamburgerIsOpen,
       }}
     >
       {props.children}

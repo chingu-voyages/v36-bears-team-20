@@ -1,10 +1,12 @@
 import { useRef, useContext } from "react";
+
+import axios from "axios";
 import { useNavigate, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+
 import { UserContext } from "../context/user-context";
 import HikingImg from "../images/hikingImg.jpg";
-import { Link } from "react-router-dom";
-import axios from "axios";
 
 export default function Login() {
   const email = useRef();
@@ -15,17 +17,23 @@ export default function Login() {
   const handleLogin = (event) => {
     event.preventDefault();
     axios
-      .post("http://localhost:8000/api/auth/login", {
-        email: email.current.value,
-        password: password.current.value,
-      })
+      .post(
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/auth/login`,
+        {
+          email: email.current.value,
+          password: password.current.value,
+        }
+      )
       .then((response) => {
         setToken(response.data.token);
         navigate("/map");
       })
       .catch((error) => {
-        console.log(error)
-        toast.error("Wrong credentials");
+        toast.error("Wrong credentials", {
+          toastId: "wrong_credentials",
+        });
       });
   };
 

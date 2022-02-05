@@ -17,7 +17,7 @@ function Profile() {
   useEffect(() => {
     if (token && user) {
       axios
-        .get(`http://localhost:8000/api/users/${user.id}`, {
+        .get(`http://localhost:8000/api/users/${user._id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {

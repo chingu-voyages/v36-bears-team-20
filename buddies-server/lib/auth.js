@@ -6,32 +6,32 @@ const { compose } = require("./utils");
 const config = require("../config");
 
 const generateToken = ({ _id, username, isAdmin }, { expiresIn }) => {
-    const payload = {
-        _id,
-        username,
-        permissions: isAdmin ? "admin user" : "user"
-    };
+  const payload = {
+    _id,
+    username,
+    permissions: isAdmin ? "admin user" : "user",
+  };
 
-    const token = jwt.sign(payload, config.SECRET_KEY, {
-        expiresIn: expiresIn || "7 days",
-        algorithm: "HS256"
-    });
+  const token = jwt.sign(payload, config.SECRET_KEY, {
+    expiresIn: expiresIn || "7 days",
+    algorithm: "HS256",
+  });
 
-    return token;
-}
+  return token;
+};
 
 const ensureValid = (token) => {
-    return jwt.verify(token, config.SECRET_KEY)
-}
+  return jwt.verify(token, config.SECRET_KEY);
+};
 
 const requiresRole = (role) => {
-    return compose([
-        jwtMiddleware({ 
-            secret: config.SECRET_KEY,
-            algorithms: ["HS256"]
-        }),
-        authMiddleware.check(role)
-    ])
-}
+  return compose([
+    jwtMiddleware({
+      secret: config.SECRET_KEY,
+      algorithms: ["HS256"],
+    }),
+    authMiddleware.check(role),
+  ]);
+};
 
-module.exports = { generateToken, requiresRole, ensureValid }
+module.exports = { generateToken, requiresRole, ensureValid };

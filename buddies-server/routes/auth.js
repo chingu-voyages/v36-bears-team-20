@@ -82,11 +82,14 @@ router.post(
       return res.status(400).json("wrong password");
     }
 
-    const token = generateToken({
-      _id: user._id,
-      username: user.username,
-      isAdmin: user.isAdmin
-    }, { expiresIn: "7 days" });
+    const token = generateToken(
+      {
+        _id: user._id,
+        username: user.username,
+        isAdmin: user.isAdmin,
+      },
+      { expiresIn: "7 days" }
+    );
 
     return res.status(200).json({ token });
   })

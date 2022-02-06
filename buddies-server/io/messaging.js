@@ -29,7 +29,7 @@ const init = (io) => {
   namespace.use(ioRequiresRole("user"));
 
   namespace.on("connection", async (socket) => {
-    const user = await User.findById(socket.user._id)
+    const user = await User.findById(socket.user._id);
 
     if (!user) {
       throw new Error("unauthorized");
@@ -49,7 +49,7 @@ const init = (io) => {
 
       if (user.chatrooms.some((x) => x.chatroomId === chatroomId)) {
         const chatroom = await Chatroom.findById(chatroomId);
-        chatroom.messages.push({ from: socket.user_id, message })
+        chatroom.messages.push({ from: socket.user_id, message });
 
         await chatroom.updateOne({ $set: chatroom });
 

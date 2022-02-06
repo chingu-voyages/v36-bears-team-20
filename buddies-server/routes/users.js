@@ -71,7 +71,9 @@ router.get(
 
       return res.status(200).json(user.chatrooms);
     } else {
-      return res.status(403).json("You can get chatrooms of only your account!");
+      return res
+        .status(403)
+        .json("You can get chatrooms of only your account!");
     }
   })
 );

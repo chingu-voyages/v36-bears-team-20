@@ -35,7 +35,7 @@ const requiresRole = (role) => {
 };
 
 const ioRequiresRole = (role) => {
-  return (socket, next) => authMiddleware.check(role)(socket, {}, next)
-}
+  return (socket, next) => authMiddleware.check(role)(socket, {}, next);
+};
 
 module.exports = { generateToken, requiresRole, ioRequiresRole, ensureValid };

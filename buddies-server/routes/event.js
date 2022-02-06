@@ -69,7 +69,9 @@ router.put(
 
       const user = await User.findById(userId);
 
-      const chatroom = await (new Chatroom()).save();
+      const chatroom = new Chatroom();
+
+      await chatroom.save();
 
       user.chatrooms.push({
         chatroomId: chatroom._id,
@@ -108,7 +110,7 @@ router.put(
 
       await user.updateOne({ $set: user });
 
-      await Chatroom.findByIdAndDelete(chatroom.chatroomId)
+      await Chatroom.findByIdAndDelete(chatroom.chatroomId);
 
       return res.status(200).json(event);
     } else {

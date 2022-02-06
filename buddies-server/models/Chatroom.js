@@ -1,21 +1,19 @@
 const mongoose = require("mongoose");
 
-const ChatroomMessageSchema = new mongoose.Schema(
-  {
-    from: {
-      type: String,
-      required: true
-    },
-    message: {
-      type: String,
-      required: true
-    },
-  }
-)
+const ChatroomMessageSchema = new mongoose.Schema({
+  from: {
+    type: String,
+    required: true,
+  },
+  message: {
+    type: String,
+    required: true,
+  },
+});
 
 const ChatroomSchema = new mongoose.Schema(
   {
-    messages: [ChatroomMessageSchema]
+    messages: [ChatroomMessageSchema],
   },
   { timestamps: true }
 );

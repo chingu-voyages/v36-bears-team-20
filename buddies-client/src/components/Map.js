@@ -150,6 +150,8 @@ export default function Map() {
       className="relative flex flex-col justify-center items-center"
       style={{ height: "100vh" }}
     >
+      {/* Place MapHeader outside MapGL DOM tree to prevent mouse clicks from propagating to MapGL */}
+      {!isOpen && <MapHeader handleDropPin={handleDropPin} />}
       <MapGL
         ref={mapRef}
         {...viewport}
@@ -162,7 +164,6 @@ export default function Map() {
           setHamburgerIsOpen(false);
         }}
       >
-        {!isOpen && <MapHeader handleDropPin={handleDropPin} />}
         <AddEventForm
           isOpen={isOpen}
           setIsOpen={setIsOpen}

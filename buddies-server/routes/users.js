@@ -53,9 +53,26 @@ router.get(
   "/:id",
   asyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
-    const { password, updatedAt, ...other } = user._doc;
+    const { chatrooms, password, updatedAt, ...other } = user._doc;
 
     return res.status(200).json(other);
+  })
+);
+
+//get a user's chatrooms
+router.get(
+  "/:id/chatrooms",
+  asyncHandler(async (req, res) => {
+    if (
+      req.user._id === req.params.id ||
+      req.user.permissions.includes("admin")
+    ) {
+      const user = await User.findById(req.params.id);
+
+      return res.status(200).json(user.chatrooms);
+    } else {
+      return res.status(403).json("You can get chatrooms of only your account!");
+    }
   })
 );
 

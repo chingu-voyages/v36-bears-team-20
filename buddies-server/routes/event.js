@@ -3,7 +3,9 @@ const express = require("express");
 const asyncHandler = require("express-async-handler");
 
 const { requiresRole } = require("../lib/auth");
+const Chatroom = require("../models/Chatroom");
 const Event = require("../models/Event");
+const User = require("../models/User");
 
 const router = express.Router();
 
@@ -20,7 +22,7 @@ router.post(
     }),
   }),
   asyncHandler(async (req, res) => {
-    req.body.userId = req.user.id;
+    req.body.userId = req.user._id;
     const newEvent = new Event(req.body);
     const savedEvent = await newEvent.save();
 
@@ -43,7 +45,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
 
-    if (event.userId === req.user.id) {
+    if (event.userId === req.user._id) {
       await event.updateOne({ $set: req.body });
 
       return res.status(200).json("you updated your event");
@@ -59,11 +61,25 @@ router.put(
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     if (!event.guests.includes(userId)) {
       event.guests.push(userId);
       await event.updateOne({ $set: event });
+
+      const user = await User.findById(userId);
+
+      const chatroom = new Chatroom();
+
+      await chatroom.save();
+
+      user.chatrooms.push({
+        chatroomId: chatroom._id,
+        chatroomType: "event",
+        relatedId: event._id,
+      });
+
+      await user.updateOne({ $set: user });
 
       return res.status(200).json(event);
     } else {
@@ -78,11 +94,23 @@ router.put(
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     if (event.guests.includes(userId)) {
       event.guests.splice(event.guests.indexOf(userId), 1);
       await event.updateOne({ $set: event });
+
+      const user = await User.findById(userId);
+
+      const chatroom = user.chatrooms.find(
+        (x) => x.chatroomType === "event" && x.relatedId === event._id
+      );
+
+      user.chatrooms.splice(user.chatrooms.indexOf(chatroom), 1);
+
+      await user.updateOne({ $set: user });
+
+      await Chatroom.findByIdAndDelete(chatroom.chatroomId);
 
       return res.status(200).json(event);
     } else {
@@ -98,7 +126,7 @@ router.delete(
   asyncHandler(async (req, res) => {
     const event = await Event.findById(req.params.id);
 
-    if (event.userId === req.user.id) {
+    if (event.userId === req.user._id) {
       await event.deleteOne();
 
       return res.status(200).json("event has been deleted");

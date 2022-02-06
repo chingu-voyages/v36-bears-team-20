@@ -8,11 +8,15 @@ const helmet = require("helmet");
 const createError = require("http-errors");
 const mongoose = require("mongoose");
 const logger = require("morgan");
+const http = require("http");
+const socketio = require("socket.io");
 
 const config = require("./config");
 const authRoute = require("./routes/auth");
 const eventRoute = require("./routes/event");
 const userRoute = require("./routes/users");
+
+const messagingIo = require("./io/messaging");
 
 mongoose.connect(
   config.MONGO_URL,
@@ -29,6 +33,8 @@ const corsOptions = {
 };
 
 const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -44,10 +50,12 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
 
-// routes
+// routes + socketio
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/events", eventRoute);
+
+messagingIo.init(io);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -69,8 +77,9 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-app.listen(8000, () => {
+server.listen(8000, () => {
   console.log("Backend server is running!");
 });
 
 module.exports = app;
+module.exports.io = io;

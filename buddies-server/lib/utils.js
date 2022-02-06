@@ -1,5 +1,5 @@
 // ref: https://stackoverflow.com/a/48733909
-function compose(middleware) {
+const compose = (middleware) => {
   if (!middleware.length) {
     return function (_req, _res, next) {
       next();
@@ -15,7 +15,7 @@ function compose(middleware) {
       compose(tail)(req, res, next);
     });
   };
-}
+};
 
 module.exports = {
   compose,

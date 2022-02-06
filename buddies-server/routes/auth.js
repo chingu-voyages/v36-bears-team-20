@@ -35,7 +35,7 @@ router.post(
 
       const token = generateToken(
         {
-          id: user.id, // formerly _id
+          _id: user._id,
           username: user.username,
           isAdmin: user.isAdmin,
         },
@@ -84,7 +84,7 @@ router.post(
 
     const token = generateToken(
       {
-        id: user.id, // formerly _id
+        _id: user._id,
         username: user.username,
         isAdmin: user.isAdmin,
       },

@@ -69,15 +69,11 @@ router.put(
 
       const user = await User.findById(userId);
 
-      const chatroom = new Chatroom();
+      const chatroom = new Chatroom({ chatroomType: "event", relatedId: event._id });
 
       await chatroom.save();
 
-      user.chatrooms.push({
-        chatroomId: chatroom._id,
-        chatroomType: "event",
-        relatedId: event._id,
-      });
+      user.chatrooms.push(chatroom._id);
 
       await user.updateOne({ $set: user });
 
@@ -102,15 +98,16 @@ router.put(
 
       const user = await User.findById(userId);
 
-      const chatroom = user.chatrooms.find(
-        (x) => x.chatroomType === "event" && x.relatedId === event._id
-      );
+      const chatroom = await Chatroom.findOne({
+        chatroomType: "event",
+        relatedId: event._id,
+      }, { messages: 0 });
 
-      user.chatrooms.splice(user.chatrooms.indexOf(chatroom), 1);
+      user.chatrooms.splice(user.chatrooms.indexOf(chatroom._id), 1);
 
       await user.updateOne({ $set: user });
 
-      await Chatroom.findByIdAndDelete(chatroom.chatroomId);
+      await Chatroom.findByIdAndDelete(chatroom._id);
 
       return res.status(200).json(event);
     } else {

@@ -1,20 +1,5 @@
 const mongoose = require("mongoose");
 
-const UserChatroomSchema = new mongoose.Schema({
-  chatroomId: {
-    type: String,
-    required: true,
-  },
-  chatroomType: {
-    type: String,
-    required: true,
-    enum: ["event"],
-  },
-  relatedId: {
-    type: String,
-  },
-});
-
 const UserSchema = new mongoose.Schema(
   {
     username: {
@@ -71,7 +56,10 @@ const UserSchema = new mongoose.Schema(
         "videogames",
       ],
     },
-    chatrooms: [UserChatroomSchema],
+    chatrooms: {
+      type: Array,
+      default: [],
+    },
   },
   { timestamps: true }
 );

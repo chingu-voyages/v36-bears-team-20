@@ -62,6 +62,7 @@ router.get(
 //get a user's chatrooms
 router.get(
   "/:id/chatrooms",
+  requiresRole("user"),
   asyncHandler(async (req, res) => {
     if (
       req.user._id === req.params.id ||

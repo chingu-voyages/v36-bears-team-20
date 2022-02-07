@@ -12,6 +12,7 @@ const config = {
     (env === "development"
       ? require("crypto").randomBytes(48).toString("hex")
       : undefined),
+  MESSAGES_PER_REQUEST: 20,
 };
 
 module.exports = config;

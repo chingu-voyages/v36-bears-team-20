@@ -13,6 +13,14 @@ const ChatroomMessageSchema = new mongoose.Schema({
 
 const ChatroomSchema = new mongoose.Schema(
   {
+    chatroomType: {
+      type: String,
+      required: true,
+      enum: ["event"],
+    },
+    relatedId: {
+      type: String,
+    },
     messages: [ChatroomMessageSchema],
   },
   { timestamps: true }

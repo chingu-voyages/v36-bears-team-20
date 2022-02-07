@@ -52,9 +52,13 @@ router.get(
     }
 
     if (user.chatrooms.contains(req.params.id)) {
-      const chatroom = await Chatroom.findById(req.params.id,
-      {
-        messages: { $slice: [start * -1 - config.MESSAGES_PER_REQUEST, config.MESSAGES_PER_REQUEST] }
+      const chatroom = await Chatroom.findById(req.params.id, {
+        messages: {
+          $slice: [
+            start * -1 - config.MESSAGES_PER_REQUEST,
+            config.MESSAGES_PER_REQUEST,
+          ],
+        },
       });
 
       return res.status(200).json(chatroom);

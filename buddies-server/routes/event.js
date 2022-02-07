@@ -69,7 +69,10 @@ router.put(
 
       const user = await User.findById(userId);
 
-      const chatroom = new Chatroom({ chatroomType: "event", relatedId: event._id });
+      const chatroom = new Chatroom({
+        chatroomType: "event",
+        relatedId: event._id,
+      });
 
       await chatroom.save();
 
@@ -98,10 +101,13 @@ router.put(
 
       const user = await User.findById(userId);
 
-      const chatroom = await Chatroom.findOne({
-        chatroomType: "event",
-        relatedId: event._id,
-      }, { messages: 0 });
+      const chatroom = await Chatroom.findOne(
+        {
+          chatroomType: "event",
+          relatedId: event._id,
+        },
+        { messages: 0 }
+      );
 
       user.chatrooms.splice(user.chatrooms.indexOf(chatroom._id), 1);
 

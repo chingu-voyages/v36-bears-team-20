@@ -15,6 +15,7 @@ const config = require("./config");
 const authRoute = require("./routes/auth");
 const eventRoute = require("./routes/event");
 const userRoute = require("./routes/users");
+const chatroomRoute = require("./routes/chatrooms");
 
 const messagingIo = require("./io/messaging");
 
@@ -54,6 +55,7 @@ app.use(helmet());
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/events", eventRoute);
+app.use("/api/chatrooms", chatroomRoute);
 
 messagingIo.init(io);
 

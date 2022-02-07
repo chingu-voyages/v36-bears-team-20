@@ -36,8 +36,8 @@ const init = (io) => {
     }
 
     // join all chatrooms of the user
-    user.chatrooms.forEach(({ chatroomId }) => {
-      socket.join(chatroomId);
+    user.chatrooms.forEach((chatroomId) => {
+      socket.join(String(chatroomId));
     });
 
     socket.on("sendMessage", async ({ chatroomId, message }) => {
@@ -47,7 +47,7 @@ const init = (io) => {
         throw new Error("unauthorized");
       }
 
-      if (user.chatrooms.some((x) => x.chatroomId === chatroomId)) {
+      if (user.chatrooms.includes(chatroomId)) {
         const chatroom = await Chatroom.findById(chatroomId);
         chatroom.messages.push({ from: socket.user_id, message });
 

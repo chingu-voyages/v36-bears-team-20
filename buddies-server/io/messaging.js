@@ -37,7 +37,7 @@ const init = (io) => {
 
     // Join all chatrooms of the user
     user.chatrooms.forEach((chatroomId) => {
-      socket.join(chatroomId);
+      socket.join(String(chatroomId));
     });
 
     socket.on("sendMessage", async ({ chatroomId, message }) => {
@@ -49,12 +49,18 @@ const init = (io) => {
       }
       if (user.chatrooms.includes(chatroomId)) {
         const chatroom = await Chatroom.findById(chatroomId);
-        chatroom.messages.push({ from: socket.user_id, message });
+
+        const messageObj = chatroom.messages.create({
+          from: socket.user._id,
+          message,
+        });
+        chatroom.messages.push(messageObj);
 
         await chatroom.updateOne({ $set: chatroom });
 
         namespace.to(chatroomId).emit("receiveMessage", {
           from: socket.user._id,
+          timestamp: messageObj.timestamp,
           chatroomId,
           message,
         });

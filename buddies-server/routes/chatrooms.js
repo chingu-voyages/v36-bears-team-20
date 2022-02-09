@@ -45,12 +45,11 @@ router.get(
     const { start } = req.query;
 
     const user = await User.findById(req.user._id);
-
     if (!user) {
       return res.status(401).send("unauthorized");
     }
 
-    if (user.chatrooms.contains(req.params.id)) {
+    if (user.chatrooms.includes(req.params.id)) {
       const chatroom = await Chatroom.findById(req.params.id, {
         messages: {
           $slice: [

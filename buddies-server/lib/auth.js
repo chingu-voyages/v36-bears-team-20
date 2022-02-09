@@ -1,9 +1,9 @@
-const authMiddleware = require("express-jwt-permissions")();
 const jwtMiddleware = require("express-jwt");
+const authMiddleware = require("express-jwt-permissions")();
 const jwt = require("jsonwebtoken");
 
-const { compose } = require("./utils");
 const config = require("../config");
+const { compose } = require("./utils");
 
 const generateToken = ({ _id, username, isAdmin }, { expiresIn }) => {
   const payload = {

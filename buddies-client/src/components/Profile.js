@@ -42,7 +42,7 @@ function Profile() {
     }
   }, [user, token, navigate, setToken]);
 
-  if (!user) {
+  if (!user || !token) {
     return <Navigate to="/login" state={{ from: location }} />;
   }
 

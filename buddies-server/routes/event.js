@@ -69,6 +69,7 @@ router.put(
 
       const user = await User.findById(userId);
 
+      // Create new chatroom
       const chatroom = new Chatroom({
         chatroomType: "event",
         relatedId: event._id,
@@ -76,7 +77,8 @@ router.put(
 
       await chatroom.save();
 
-      user.chatrooms.push(chatroom._id);
+      // Add this chatroom to user's list of chatrooms
+      user.chatrooms.push(String(chatroom._id));
 
       await user.updateOne({ $set: user });
 
@@ -132,9 +134,9 @@ router.delete(
     if (event.userId === req.user._id) {
       await event.deleteOne();
 
-      return res.status(200).json("event has been deleted");
+      return res.status(200).json("Event has been deleted");
     } else {
-      return res.status(403).json("you can only delete your own event");
+      return res.status(403).json("You can only delete your own event");
     }
   })
 );

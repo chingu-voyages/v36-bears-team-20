@@ -1,12 +1,12 @@
 const { celebrate, Joi, Segments } = require("celebrate");
-const asyncHandler = require("express-async-handler");
 const express = require("express");
+const asyncHandler = require("express-async-handler");
 const router = express.Router();
 
+const config = require("../config");
 const { requiresRole } = require("../lib/auth");
 const Chatroom = require("../models/Chatroom");
 const User = require("../models/User");
-const config = require("../config");
 
 //get a chatroom
 router.get(
@@ -14,7 +14,6 @@ router.get(
   requiresRole("user"),
   asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
-
     if (
       user.chatrooms.includes(req.params.id) ||
       req.user.permissions.includes("admin")

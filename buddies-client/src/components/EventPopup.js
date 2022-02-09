@@ -128,7 +128,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
     getEventData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log({ eventData, user });
+  // console.log({ eventData, user });
   return (
     <>
       {eventData && (
@@ -201,9 +201,8 @@ export default function EventPopup({ currentEventId, togglePopup }) {
               )}
               <IconButton
                 aria-label="chat"
-                onClick={() => {
-                  console.log("show chat");
-                }}
+                disabled={!eventData.guests.includes(user._id)}
+                href={`/chat`}
               >
                 <Badge badgeContent={0} color="info">
                   <ChatBubbleIcon />

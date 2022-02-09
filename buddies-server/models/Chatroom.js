@@ -10,8 +10,8 @@ const ChatroomMessageSchema = new mongoose.Schema({
     required: true,
   },
   timestamp: {
-    type: Date,
-    default: () => Date(),
+    type: Number,
+    default: () => Date.now(),
   },
 });
 

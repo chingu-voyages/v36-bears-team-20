@@ -1,10 +1,12 @@
 import React, { useContext, useState } from "react";
+
 import axios from "axios";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import RegisterImg from "../images/registerImg.jpg";
 import { Link, Navigate } from "react-router-dom";
+import * as Yup from "yup";
+
 import { UserContext } from "../context/user-context";
+import RegisterImg from "../images/registerImg.jpg";
 
 function Register() {
   const initialValues = {
@@ -35,11 +37,8 @@ function Register() {
     setServerState({ ok, msg });
   };
   const handleSubmit = (values, actions) => {
-    axios({
-      method: "POST",
-      url: `${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/auth/register`,
-      data: values,
-    })
+    axios
+      .post("http://localhost:8000/api/auth/register", values)
       .then((response) => {
         actions.setSubmitting(false);
         actions.resetForm();
@@ -48,9 +47,10 @@ function Register() {
       .catch((error) => {
         let msg;
 
-        switch(error.response.status) {
+        switch (error.response.status) {
           case 400:
-            msg = "Submitted data is invalid. Please check your inputs and try again.";
+            msg =
+              "Submitted data is invalid. Please check your inputs and try again.";
             break;
 
           case 409:
@@ -59,7 +59,7 @@ function Register() {
 
           default:
             msg = "Unknown error occurred. Please try again later.";
-        };
+        }
 
         actions.setSubmitting(false);
         handleServerResponse(false, msg);
@@ -135,7 +135,11 @@ function Register() {
               </button>
 
               {serverState && (
-                <p className={!serverState.ok ? "errorMsg text-red-500" : "text-green-600"}>
+                <p
+                  className={
+                    !serverState.ok ? "errorMsg text-red-500" : "text-green-600"
+                  }
+                >
                   {serverState.msg}
                 </p>
               )}

@@ -1,14 +1,26 @@
-import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import {
+  useState,
+  useMemo,
+  useRef,
+  useCallback,
+  useEffect,
+  useContext,
+} from "react";
+
+import { ButtonBase } from "@mui/material";
+import axios from "axios";
 import MapGL, { GeolocateControl, Marker } from "react-map-gl";
 import Geocoder from "react-map-gl-geocoder";
-import axios from "axios";
 
-import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import MapHeader from "./MapHeader";
+import { UserContext } from "../context/user-context";
 import AddEventForm from "./AddEventForm";
-import EventPopup from "./EventPopup";
 import EventAddPopup from "./EventAddPopup";
 import EventMarkerPin from "./EventMarkerPin";
+import EventPopup from "./EventPopup";
+import MapHeader from "./MapHeader";
+
+import "mapbox-gl/dist/mapbox-gl.css";
+import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 const geolocateControlStyle = {
   right: 10,
@@ -16,6 +28,8 @@ const geolocateControlStyle = {
 };
 
 export default function Map() {
+  const { setHamburgerIsOpen } = useContext(UserContext);
+
   const [viewport, setViewPort] = useState({
     latitude: 37.7577,
     longitude: -122.4376,
@@ -86,9 +100,15 @@ export default function Map() {
   };
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/events`).then((response) => {
-      setEventMarkers(response.data);
-    });
+    axios
+      .get(
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/events`
+      )
+      .then((response) => {
+        setEventMarkers(response.data);
+      });
   }, []);
 
   const markers = useMemo(
@@ -103,17 +123,22 @@ export default function Map() {
           className="z-0 bg-blue-300 flex justify-center items-center px-2 py-2 rounded-full border-2 border-black"
           captureClick={false}
         >
-          <img
-            src={`${event.activity}.png`}
-            alt={event.activity}
-            width="30px"
-            height="30px"
+          <ButtonBase
+            disableRipple
+            disableTouchRipple
             onClick={() => {
               setCurrentEventId(event._id);
               togglePopup(true);
             }}
-            style={{'cursor':'pointer'}}
-          />
+          >
+            <img
+              src={`${event.activity}.png`}
+              alt={event.activity}
+              width="30px"
+              height="30px"
+              style={{ cursor: "pointer" }}
+            />
+          </ButtonBase>
         </Marker>
       )),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,15 +146,10 @@ export default function Map() {
   );
 
   return (
-    <div className="relative flex flex-col justify-center items-center">
-      {!isOpen && <MapHeader handleDropPin={handleDropPin} />}
-      <AddEventForm
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        location={marker}
-        setEventMarkers={setEventMarkers}
-        setShowPin={setShowPin}
-      />
+    <div
+      className="relative flex flex-col justify-center items-center"
+      style={{ height: "100vh" }}
+    >
       <MapGL
         ref={mapRef}
         {...viewport}
@@ -137,8 +157,19 @@ export default function Map() {
         mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
         mapStyle="mapbox://styles/mapbox/streets-v11"
         width="100%"
-        height="99vh"
+        height="100%"
+        onMouseDown={() => {
+          setHamburgerIsOpen(false);
+        }}
       >
+        {!isOpen && <MapHeader handleDropPin={handleDropPin} />}
+        <AddEventForm
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          location={marker}
+          setEventMarkers={setEventMarkers}
+          setShowPin={setShowPin}
+        />
         {!isOpen && (
           <EventMarkerPin
             marker={marker}

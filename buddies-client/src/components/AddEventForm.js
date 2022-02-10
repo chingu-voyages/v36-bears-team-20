@@ -1,9 +1,12 @@
 import { useState, useContext } from "react";
-import { UserContext } from "../context/user-context";
-import { toast } from "react-toastify";
-import DatePicker from "react-datepicker";
-import EventType from "./EventType";
+
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
+import { UserContext } from "../context/user-context";
+import EventType from "./EventType";
 
 export default function AddEventForm({
   isOpen,
@@ -12,19 +15,28 @@ export default function AddEventForm({
   setEventMarkers,
   setShowPin,
 }) {
-  const eventTypes_ = ["party","drink","coffee","talk","walk","sports"]
-  const { user } = useContext(UserContext);
+  const eventTypes_ = ["party", "drink", "coffee", "talk", "walk", "sports"];
+  const { token, setToken } = useContext(UserContext);
   const [formEventType, setFormEventType] = useState();
-  const [eventTypes, setEventTypes] = useState(eventTypes_.map((type)=>{return {'type':type,'isSelected':false}}));
+  const [eventTypes, setEventTypes] = useState(
+    eventTypes_.map((type) => {
+      return { type: type, isSelected: false };
+    })
+  );
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState();
+  const navigate = useNavigate();
 
   const setDefaults = () => {
     setTitle("");
     setDate();
     setFormEventType();
-    setEventTypes(eventTypes_.map((type)=>{return {'type':type,'isSelected':false}}));
+    setEventTypes(
+      eventTypes_.map((type) => {
+        return { type: type, isSelected: false };
+      })
+    );
   };
 
   const getIndex = (arr, element) => {
@@ -34,18 +46,21 @@ export default function AddEventForm({
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/events`, {
-        name: title,
-        date: date,
-        location: [location.latitude, location.longitude],
-        activity: formEventType,
-        userId: user._id,
-      })
+      .post(
+        "http://localhost:8000/api/events",
+        {
+          name: title,
+          date: date,
+          location: [location.latitude, location.longitude],
+          activity: formEventType,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       .then((response) => {
         toast.dismiss();
         toast.clearWaitingQueue();
-        toast.success("Event added successfully!",{
-          toastId: "event_add"
+        toast.success("Event added successfully!", {
+          toastId: "event_add",
         });
         setEventMarkers((prev) => {
           return [...prev, response.data];
@@ -56,13 +71,24 @@ export default function AddEventForm({
       })
       .catch(({ response }) => {
         if (response.data._message === "Event validation failed") {
-          toast.error("Please enter all required fields and try again.",{
-            toastId: "enter_all_required_fields"
+          toast.error("Please enter all required fields and try again.", {
+            toastId: "enter_all_required_fields",
           });
         } else {
-          toast.error("Unknown error occurred! Please try again.",{
-            toastId: "unknown_error"
-          });
+          let message = "";
+
+          switch (response.status) {
+            case 401:
+              message = "Invalid session. Please relogin and try again.";
+              setToken("");
+              navigate("/login");
+              break;
+
+            default:
+              message = "Unknown error occurred.";
+          }
+
+          toast.error(message);
         }
       });
   };

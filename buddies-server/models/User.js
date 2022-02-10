@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
 const UserSchema = new mongoose.Schema(
   {
@@ -56,6 +55,10 @@ const UserSchema = new mongoose.Schema(
         "boardgames",
         "videogames",
       ],
+    },
+    chatrooms: {
+      type: Array,
+      default: [],
     },
   },
   { timestamps: true }

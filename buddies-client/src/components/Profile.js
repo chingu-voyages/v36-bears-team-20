@@ -4,6 +4,7 @@ import axios from "axios";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { UserContext } from "../context/user-context";
 import ProfileBgImg from "../images/profile-bg.png";
@@ -47,9 +48,9 @@ function Profile() {
   }
 
   return (
-    <div className="">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="profile">
+      <div className="profile mt-10">
         <div className="flex flex-col md:flex-row w-full">
           <img
             src={ProfileBgImg}
@@ -91,6 +92,7 @@ function Profile() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

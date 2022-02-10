@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const { celebrate, Joi, Segments } = require("celebrate");
 const express = require("express");
 const asyncHandler = require("express-async-handler");
 const router = express.Router();
@@ -10,6 +11,13 @@ const User = require("../models/User");
 router.put(
   "/:id",
   requiresRole("user"),
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      username: Joi.string().min(4).max(20),
+      email: Joi.string().lowercase().email(),
+      password: Joi.string().min(6).max(40),
+    }),
+  }),
   asyncHandler(async (req, res) => {
     if (
       req.user._id === req.params.id ||

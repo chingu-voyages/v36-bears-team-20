@@ -73,6 +73,8 @@ router.put(
       const chatroom = new Chatroom({
         chatroomType: "event",
         relatedId: event._id,
+        host: event.userId,
+        guest: userId,
       });
 
       await chatroom.save();
@@ -107,6 +109,7 @@ router.put(
         {
           chatroomType: "event",
           relatedId: event._id,
+          guest: userId,
         },
         { messages: 0 }
       );

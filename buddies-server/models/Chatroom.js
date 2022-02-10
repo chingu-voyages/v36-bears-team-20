@@ -25,6 +25,12 @@ const ChatroomSchema = new mongoose.Schema(
     relatedId: {
       type: String,
     },
+    host: {
+      type: String,
+    },
+    guest: {
+      type: String,
+    },
     messages: [ChatroomMessageSchema],
   },
   { timestamps: true }

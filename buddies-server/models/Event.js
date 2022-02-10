@@ -32,10 +32,6 @@ const EventSchema = new mongoose.Schema(
       ],
       required: true,
     },
-    // hostId: {
-    // type: Schema.Types.ObjectId,
-    // ref: 'User',
-    // },
     guests: {
       type: Array,
       default: [],

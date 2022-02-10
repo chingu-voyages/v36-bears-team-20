@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import { useContext } from "react";
 
 import MailIcon from "@mui/icons-material/Mail";
 import {
@@ -16,11 +17,14 @@ import {
   ListSubheader,
 } from "@mui/material";
 
+import { UserContext } from "../../context/user-context";
+
 function truncate(str, n) {
   return str?.length > n ? str.substr(0, n - 1) + "..." : str;
 }
 
-const SideDrawer = ({ chatsAsGuest, setCurrentChatId }) => {
+const SideDrawer = ({ chats, setCurrentChatId }) => {
+  const { user } = useContext(UserContext);
   const drawerWidth = 450;
   return (
     <Drawer
@@ -39,7 +43,7 @@ const SideDrawer = ({ chatsAsGuest, setCurrentChatId }) => {
       <Divider />
       <List dense={true} subheader={<ListSubheader>My Hosts</ListSubheader>}>
         <Divider />
-        {chatsAsGuest.map((chat, index) => (
+        {chats.map((chat, index) => (
           <Fragment key={chat.eventName + index}>
             <ListItem
               button
@@ -68,7 +72,7 @@ const SideDrawer = ({ chatsAsGuest, setCurrentChatId }) => {
                       {chat.username}
                     </Typography>
                     <Typography>
-                      {(chat.messages?.at(-1)?.from === "self"
+                      {(chat.messages?.at(-1)?.from === user._id
                         ? `You: `
                         : null) +
                         truncate(chat.messages?.at(-1)?.["message"], 35) ||

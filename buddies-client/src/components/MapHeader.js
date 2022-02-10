@@ -1,8 +1,9 @@
 import { useContext } from "react";
 
 import AddIcon from "@mui/icons-material/Add";
+import ChatIcon from "@mui/icons-material/Chat";
 import MenuIcon from "@mui/icons-material/Menu";
-import { red, blue } from "@mui/material/colors";
+import { red, blue, green } from "@mui/material/colors";
 import Fab from "@mui/material/Fab";
 
 import { UserContext } from "../context/user-context";
@@ -49,6 +50,23 @@ export default function MapHeader(props) {
           id="dropdownTopButton"
         >
           <MenuIcon />
+        </Fab>
+        <Fab
+          color="inherit"
+          aria-label="add"
+          onClick={() => {
+            setHamburgerIsOpen(false);
+          }}
+          href="/chat"
+          sx={{
+            color: "common.white",
+            bgcolor: green[500],
+            "&:hover": {
+              bgcolor: green[600],
+            },
+          }}
+        >
+          <ChatIcon />
         </Fab>
         {hamburgerIsOpen && (
           <div

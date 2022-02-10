@@ -13,7 +13,7 @@ router.post(
   celebrate({
     [Segments.BODY]: Joi.object().keys({
       username: Joi.string().min(4).max(20).required(),
-      email: Joi.string().lowercase().email(),
+      email: Joi.string().lowercase().email().required(),
       password: Joi.string().min(6).max(40).required(),
     }),
   }),

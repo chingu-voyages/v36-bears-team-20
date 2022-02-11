@@ -119,11 +119,11 @@ router.put(
       const guest = await User.findById(userId);
 
       host.chatroomsAsHost.splice(
-        user.chatroomsAsHost.indexOf(chatroom._id),
+        host.chatroomsAsHost.indexOf(chatroom._id),
         1
       );
       guest.chatroomsAsGuest.splice(
-        user.chatroomsAsGuest.indexOf(chatroom._id),
+        guest.chatroomsAsGuest.indexOf(chatroom._id),
         1
       );
 

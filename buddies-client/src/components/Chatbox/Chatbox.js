@@ -46,33 +46,40 @@ async function getUserName(userid, token) {
   return resp.data.username;
 }
 
-async function fetchChats(user, token, setChats) {
+async function getChats(chat_ids, token) {
   const chats = [];
+  for (const chat_id of chat_ids) {
+    const chatroom_messages = await getChatRoomMessages(chat_id, token);
+    const event_details = await getEventDetails(
+      chatroom_messages["relatedId"],
+      token
+    );
+    const chatroom = {
+      ...{
+        hostUserName: await getUserName(chatroom_messages.host, token),
+        guestUserName: await getUserName(chatroom_messages.guest, token),
+        eventName: event_details.name,
+      },
+      ...chatroom_messages,
+    };
+    chats.push(chatroom);
+  }
+  return chats;
+}
+
+async function fetchChats(user, token, setChatsAsGuest, setChatsAsHost) {
   try {
     if (token && user) {
       // Get current user's chatroom ids
       const chat_ids = await getChatIds(user._id, token);
-      console.log(chat_ids);
-      for (const chat_id of chat_ids) {
-        // Get chatroom messages
-        const chatroom_messages = await getChatRoomMessages(chat_id, token);
-        const event_details = await getEventDetails(
-          chatroom_messages["relatedId"],
-          token
-        );
+      const chat_ids_as_guest = chat_ids["chatroomsAsGuest"];
+      const chat_ids_as_host = chat_ids["chatroomsAsHost"];
+      // Get current user's chatrooms
+      const chats_as_guest = await getChats(chat_ids_as_guest, token);
+      const chats_as_host = await getChats(chat_ids_as_host, token);
 
-        const chatroom = {
-          ...{
-            hostUserName: await getUserName(chatroom_messages.host, token),
-            guestUserName: await getUserName(chatroom_messages.guest, token),
-            eventName: event_details.name,
-          },
-          ...chatroom_messages,
-        };
-
-        chats.push(chatroom);
-      }
-      setChats(chats);
+      setChatsAsGuest(chats_as_guest);
+      setChatsAsHost(chats_as_host);
     }
   } catch (e) {
     console.error("unknown error occurred");
@@ -84,28 +91,47 @@ export default function Chatbox({ socket }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [chats, setChats] = useState([]);
+  const [chatsAsGuest, setChatsAsGuest] = useState([]);
+  const [chatsAsHost, setChatsAsHost] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(null);
-  console.log(currentChatId);
-  const currentChat = chats.find((chat) => chat._id === currentChatId);
-  const counterPartyName =
-    currentChat !== undefined
-      ? currentChat.host === user._id
-        ? currentChat.guestUserName
-        : currentChat.hostUserName
-      : undefined;
 
   useEffect(() => {
-    fetchChats(user, token, setChats);
+    fetchChats(user, token, setChatsAsGuest, setChatsAsHost);
   }, [user, token, navigate, setToken, currentChatId]);
 
   useEffect(() => {
     if (socket) {
+      // Refresh everything when any message is received
       socket.on("receiveMessage", () => {
-        fetchChats(user, token, setChats);
+        fetchChats(user, token, setChatsAsGuest, setChatsAsHost);
       });
     }
   }, [socket, token, user]);
+
+  // Is the user a guest in the current chat?
+  const currentChatAsGuest = chatsAsGuest.some(
+    (chat) => chat._id === currentChatId
+  );
+  // Is the user a host in the current chat?
+  const currentChatAsHost = chatsAsHost.some(
+    (chat) => chat._id === currentChatId
+  );
+
+  // Get the current chatroom
+  const currentChat = currentChatAsGuest
+    ? chatsAsGuest.find((chat) => chat._id === currentChatId)
+    : currentChatAsHost
+    ? chatsAsHost.find((chat) => chat._id === currentChatId)
+    : undefined;
+
+  // Name to display on top of chat bar
+  const counterPartyName =
+    currentChat !== undefined
+      ? currentChatAsGuest
+        ? currentChat.hostUserName // If user is a guest talking to host, show host's name
+        : currentChat.guestUserName // If user is a host talking to a guest, show guest's name
+      : undefined;
+
   /*
   if (!user || !token) {
     return <Navigate to="/login" state={{ from: location }} />;
@@ -113,7 +139,7 @@ export default function Chatbox({ socket }) {
   */
   return (
     <Box sx={{ display: "flex" }}>
-      <SideDrawer {...{ chats, setCurrentChatId }} />
+      <SideDrawer {...{ chatsAsGuest, chatsAsHost, setCurrentChatId }} />
       <Box
         sx={{
           display: "grid",
@@ -136,13 +162,8 @@ export default function Chatbox({ socket }) {
                 onlineStatus: "online",
               }}
             />
-            <ChatMessages
-              messages={
-                chats.find((chat) => chat["_id"] === currentChatId)?.messages ||
-                []
-              }
-            />
-            <TextInput {...{ chatroomId: currentChatId, socket }} />
+            <ChatMessages messages={currentChat.messages} userid={user._id} />
+            <TextInput {...{ currentChatId, socket }} />
           </>
         )}
       </Box>

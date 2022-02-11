@@ -173,7 +173,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                   <PeopleIcon />
                 </Badge>
               </IconButton>
-              {user ? (
+              {user && eventData.userId !== user._id ? (
                 <>
                   {eventData.guests.includes(user._id) ? (
                     <button
@@ -192,12 +192,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                   )}
                 </>
               ) : (
-                <button
-                  className="bg-blue-500 text-white text-sm rounded font-bold px-3 py-1"
-                  onClick={handleJoinEvent}
-                >
-                  Join
-                </button>
+                `You are the host`
               )}
               <IconButton
                 aria-label="chat"

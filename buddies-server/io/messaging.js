@@ -36,7 +36,11 @@ const init = (io) => {
     console.log(`User ${user.username} has connected!`);
 
     // Join all chatrooms of the user
-    user.chatrooms.forEach((chatroomId) => {
+    user.chatroomsAsHost.forEach((chatroomId) => {
+      socket.join(String(chatroomId));
+    });
+
+    user.chatroomsAsGuest.forEach((chatroomId) => {
       socket.join(String(chatroomId));
     });
 
@@ -47,7 +51,10 @@ const init = (io) => {
       if (!user) {
         throw new Error("unauthorized");
       }
-      if (user.chatrooms.includes(chatroomId)) {
+      if (
+        user.chatroomsAsHost.includes(chatroomId) ||
+        user.chatroomsAsGuest.includes(chatroomId)
+      ) {
         const chatroom = await Chatroom.findById(chatroomId);
 
         const messageObj = chatroom.messages.create({

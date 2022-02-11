@@ -15,7 +15,8 @@ router.get(
   asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id);
     if (
-      user.chatrooms.includes(req.params.id) ||
+      user.chatroomsAsHost.includes(req.params.id) ||
+      user.chatroomsAsGuest.includes(req.params.id) ||
       req.user.permissions.includes("admin")
     ) {
       const chatroom = await Chatroom.findById(req.params.id, {
@@ -49,7 +50,10 @@ router.get(
       return res.status(401).send("unauthorized");
     }
 
-    if (user.chatrooms.includes(req.params.id)) {
+    if (
+      user.chatroomsAsHost.includes(req.params.id) ||
+      user.chatroomsAsGuest.includes(req.params.id)
+    ) {
       const chatroom = await Chatroom.findById(req.params.id, {
         messages: {
           $slice: [

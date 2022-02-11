@@ -24,6 +24,7 @@ function App() {
     const newSocket = io("http://localhost:8000/message", {
       auth: { token: `Bearer ${token}` },
     });
+
     setSocket(newSocket);
     return () => newSocket.close();
   }, [setSocket, token]);
@@ -45,7 +46,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/map" element={<Map />} />
+        <Route path="/map" element={<Map socket={socket} />} />
         <Route path="/chat" element={<Chatbox socket={socket} />} />
       </Routes>
     </>

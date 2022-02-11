@@ -11,6 +11,7 @@ import { ButtonBase } from "@mui/material";
 import axios from "axios";
 import MapGL, { GeolocateControl, Marker } from "react-map-gl";
 import Geocoder from "react-map-gl-geocoder";
+import { toast } from "react-toastify";
 
 import { UserContext } from "../context/user-context";
 import AddEventForm from "./AddEventForm";
@@ -27,7 +28,7 @@ const geolocateControlStyle = {
   top: 10,
 };
 
-export default function Map() {
+export default function Map({ socket }) {
   const { setHamburgerIsOpen } = useContext(UserContext);
 
   const [viewport, setViewPort] = useState({
@@ -40,6 +41,7 @@ export default function Map() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [eventMarkers, setEventMarkers] = useState([]);
+  const [unreadMessages, setUnreadMessages] = useState(0);
 
   const [showPin, setShowPin] = useState(false);
 
@@ -111,6 +113,20 @@ export default function Map() {
       });
   }, []);
 
+  useEffect(() => {
+    if (socket) {
+      const listener = (data) => {
+        toast.info("You have a new message!", { toastId: "new_message" });
+
+        setUnreadMessages((state) => state + 1);
+      };
+
+      socket.on("receiveMessage", listener);
+
+      return () => socket.off("receiveMessage", listener);
+    }
+  }, [socket]);
+
   const markers = useMemo(
     () =>
       eventMarkers.map((event) => (
@@ -151,7 +167,12 @@ export default function Map() {
       style={{ height: "100vh" }}
     >
       {/* Place MapHeader outside MapGL DOM tree to prevent mouse clicks from propagating to MapGL */}
-      {!isOpen && <MapHeader handleDropPin={handleDropPin} />}
+      {!isOpen && (
+        <MapHeader
+          handleDropPin={handleDropPin}
+          unreadMessages={unreadMessages}
+        />
+      )}
       <MapGL
         ref={mapRef}
         {...viewport}

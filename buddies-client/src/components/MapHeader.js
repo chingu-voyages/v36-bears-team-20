@@ -3,6 +3,7 @@ import { useContext } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import ChatIcon from "@mui/icons-material/Chat";
 import MenuIcon from "@mui/icons-material/Menu";
+import Badge from "@mui/material/Badge";
 import { red, blue, green } from "@mui/material/colors";
 import Fab from "@mui/material/Fab";
 
@@ -66,7 +67,9 @@ export default function MapHeader(props) {
             },
           }}
         >
-          <ChatIcon />
+          <Badge badgeContent={props.unreadMessages} color="secondary">
+            <ChatIcon />
+          </Badge>
         </Fab>
         {hamburgerIsOpen && (
           <div

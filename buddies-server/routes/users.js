@@ -61,7 +61,8 @@ router.get(
   "/:id",
   asyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
-    const { chatrooms, password, updatedAt, ...other } = user._doc;
+    const { chatroomsAsGuest, chatroomsAsHost, password, updatedAt, ...other } =
+      user._doc;
 
     return res.status(200).json(other);
   })
@@ -78,7 +79,10 @@ router.get(
     ) {
       const user = await User.findById(req.params.id);
 
-      return res.status(200).json(user.chatrooms);
+      return res.status(200).json({
+        chatroomsAsGuest: user.chatroomsAsGuest,
+        chatroomsAsHost: user.chatroomsAsHost,
+      });
     } else {
       return res
         .status(403)

@@ -67,8 +67,6 @@ router.put(
       event.guests.push(userId);
       await event.updateOne({ $set: event });
 
-      const user = await User.findById(userId);
-
       // Create new chatroom
       const chatroom = new Chatroom({
         chatroomType: "event",
@@ -79,10 +77,15 @@ router.put(
 
       await chatroom.save();
 
-      // Add this chatroom to user's list of chatrooms
-      user.chatrooms.push(String(chatroom._id));
+      const host = await User.findById(event.userId);
+      const guest = await User.findById(userId);
 
-      await user.updateOne({ $set: user });
+      // Add this chatroom to user's list of chatrooms
+      host.chatroomsAsHost.push(String(chatroom._id));
+      guest.chatroomsAsGuest.push(String(chatroom._id));
+
+      await host.updateOne({ $set: host });
+      await guest.updateOne({ $set: guest });
 
       return res.status(200).json(event);
     } else {
@@ -103,8 +106,6 @@ router.put(
       event.guests.splice(event.guests.indexOf(userId), 1);
       await event.updateOne({ $set: event });
 
-      const user = await User.findById(userId);
-
       const chatroom = await Chatroom.findOne(
         {
           chatroomType: "event",
@@ -114,9 +115,20 @@ router.put(
         { messages: 0 }
       );
 
-      user.chatrooms.splice(user.chatrooms.indexOf(chatroom._id), 1);
+      const host = await User.findById(event.userId);
+      const guest = await User.findById(userId);
 
-      await user.updateOne({ $set: user });
+      host.chatroomsAsHost.splice(
+        user.chatroomsAsHost.indexOf(chatroom._id),
+        1
+      );
+      guest.chatroomsAsGuest.splice(
+        user.chatroomsAsGuest.indexOf(chatroom._id),
+        1
+      );
+
+      await host.updateOne({ $set: host });
+      await guest.updateOne({ $set: guest });
 
       await Chatroom.findByIdAndDelete(chatroom._id);
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 
 import ChatMsg from "./ChatMsg";
 
-const ChatMessages = ({ messages }) => {
+const ChatMessages = ({ messages, userid }) => {
   // Automatically scroll down to latest message whenever current user
   // posts a new message
   const scrollRef = useRef(null);
@@ -42,7 +42,7 @@ const ChatMessages = ({ messages }) => {
     >
       {groupedMessages.map((messageGroup, idx) => (
         <ChatMsg
-          side={messageGroup[0].from === "counterParty" ? "left" : "right"}
+          side={messageGroup[0].from !== userid ? "left" : "right"}
           key={idx}
           messages={messageGroup.map((m) => m.message)}
         />

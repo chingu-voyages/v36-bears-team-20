@@ -3,9 +3,8 @@ import React, { useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import { Box, Button, TextField } from "@mui/material";
 
-const TextInput = ({ chatroomId, socket }) => {
+const TextInput = ({ currentChatId, socket }) => {
   const [inputText, setInputText] = useState("");
-
   return (
     <Box
       sx={{
@@ -19,12 +18,15 @@ const TextInput = ({ chatroomId, socket }) => {
       autoComplete="off"
       onSubmit={(e) => {
         e.preventDefault();
-        socket.emit("sendMessage", { chatroomId, message: inputText });
+        socket.emit("sendMessage", {
+          chatroomId: currentChatId,
+          message: inputText,
+        });
         setInputText("");
       }}
     >
       <TextField
-        disabled={chatroomId === null}
+        disabled={currentChatId === null}
         placeholder="Type here..."
         onChange={(e) => {
           setInputText(e.target.value);

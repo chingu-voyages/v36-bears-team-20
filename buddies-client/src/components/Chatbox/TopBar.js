@@ -1,13 +1,18 @@
 import React from "react";
 
-import { Avatar, AppBar, Toolbar } from "@mui/material";
+import { Avatar, AppBar, Toolbar, Typography } from "@mui/material";
 
-const TopBar = ({ counterPartyName, onlineStatus }) => {
+const TopBar = ({ counterPartyName }) => {
   return (
-    <AppBar position="relative" color="primary" sx={{ gridArea: "header" }}>
+    <AppBar
+      position="relative"
+      sx={{ gridArea: "header", background: "#ffab23" }}
+    >
       <Toolbar>
         <Avatar sx={{ mr: 2 }} />
-        {counterPartyName} | {onlineStatus}
+        <Typography sx={{ fontWeight: "bold", color: "black" }}>
+          {counterPartyName}
+        </Typography>
       </Toolbar>
     </AppBar>
   );

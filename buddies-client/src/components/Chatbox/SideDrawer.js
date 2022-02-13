@@ -1,7 +1,5 @@
 import React, { Fragment } from "react";
-import { useContext } from "react";
 
-import MailIcon from "@mui/icons-material/Mail";
 import {
   Avatar,
   Box,
@@ -12,19 +10,55 @@ import {
   ListItem,
   ListItemText,
   ListItemAvatar,
-  Badge,
   Typography,
   ListSubheader,
 } from "@mui/material";
-
-import { UserContext } from "../../context/user-context";
 
 function truncate(str, n) {
   return str?.length > n ? str.substr(0, n - 1) + "..." : str;
 }
 
+function timeConverter(UNIX_timestamp) {
+  const a = new Date(UNIX_timestamp);
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const year = a.getFullYear();
+  const month = months[a.getMonth()];
+  const date = a.getDate();
+  let hour = a.getHours();
+  let min = a.getMinutes();
+
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour %= 12;
+  hour = hour || 12;
+  min = min < 10 ? `0${min}` : min;
+
+  const todaysDate = new Date();
+  const sameDay =
+    todaysDate.getDate() === date &&
+    todaysDate.getMonth() === month &&
+    todaysDate.getFullYear() === year;
+
+  const timestamp = `${
+    sameDay ? date + " " + month + " " + year + " " : ""
+  }${hour}:${min} ${ampm}`;
+
+  return timestamp;
+}
+
 const SideDrawer = ({ chatsAsGuest, chatsAsHost, setCurrentChatId }) => {
-  const { user } = useContext(UserContext);
   const drawerWidth = 450;
 
   const chats = [
@@ -33,8 +67,8 @@ const SideDrawer = ({ chatsAsGuest, chatsAsHost, setCurrentChatId }) => {
       chats: chatsAsGuest,
     },
     { subheader: "My Guests", chats: chatsAsHost },
-  ];
-  console.log(chats);
+  ].filter((e) => e.chats.length);
+
   return (
     <Drawer
       sx={{
@@ -74,31 +108,21 @@ const SideDrawer = ({ chatsAsGuest, chatsAsHost, setCurrentChatId }) => {
                   disableTypography
                   primary={
                     <Box sx={{ display: "inline" }}>
-                      <Typography
-                        sx={{ fontWeight: "bold" }}
-                        component="span"
-                        variant="body1"
-                        color="text.primary"
-                      >
-                        {chat.eventName}
-                      </Typography>
-                      <Typography sx={{ textDecoration: "underline" }}>
+                      <Typography sx={{ fontWeight: "bold" }}>
                         {e.subheader === "My Hosts"
                           ? chat.hostUserName
-                          : chat.guestUserName}
+                          : chat.guestUserName}{" "}
+                        @ {chat.eventName}
                       </Typography>
-                      <Typography>
+                      <Typography sx={{ color: "#595a5c" }}>
                         {truncate(chat.messages?.at(-1)?.["message"], 35) || ``}
-                      </Typography>
-                      <Typography fontStyle="italic">
-                        {chat.messages?.at(-1)?.["timestamp"] || null}
                       </Typography>
                     </Box>
                   }
                 />
-                <Badge badgeContent={chat.unreadCount} color="primary">
-                  <MailIcon color="action" />
-                </Badge>
+                <Typography fontStyle="italic">
+                  {timeConverter(chat.messages?.at(-1)?.["timestamp"]) || null}
+                </Typography>
               </ListItem>
               <Divider />
             </Fragment>

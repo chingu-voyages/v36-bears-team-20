@@ -7,6 +7,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { UserContext } from "../../context/user-context";
+import Navbar from "../Navbar";
 import ChatMessages from "./ChatMessages";
 import SideDrawer from "./SideDrawer";
 import TextInput from "./TextInput";
@@ -144,8 +145,8 @@ export default function Chatbox({ socket }) {
         sx={{
           display: "grid",
           gridTemplateAreas: `"header"
-                              "chat"
-                              "textinput"`,
+                        "chat"
+                        "textinput"`,
           gridTemplateColumns: "auto",
           gridTemplateRows: "64px minmax(0, 1fr) 56px",
           bgcolor: (theme) => theme.palette.background.paper,
@@ -159,7 +160,6 @@ export default function Chatbox({ socket }) {
             <TopBar
               {...{
                 counterPartyName: counterPartyName,
-                onlineStatus: "online",
               }}
             />
             <ChatMessages messages={currentChat.messages} userid={user._id} />

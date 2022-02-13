@@ -128,7 +128,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
     getEventData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // console.log({ eventData, user });
+
   return (
     <>
       {eventData && (

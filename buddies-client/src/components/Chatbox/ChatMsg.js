@@ -1,60 +1,59 @@
-import React from "react";
-
+import { ListItem } from "@mui/material";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { withStyles } from "@mui/styles";
-import cx from "clsx";
-import PropTypes from "prop-types";
 
-import defaultChatMsgStyles from "./defaultChatMsg.styles";
+const ChatMsg = (props) => {
+  const { messages, userid, index, style } = props;
+  const side = messages[0].from !== userid ? "left" : "right";
 
-const ChatMsg = withStyles(defaultChatMsgStyles, { name: "ChatMsg" })(
-  (props) => {
-    const { classes, messages, side, GridContainerProps, getTypographyProps } =
-      props;
-
-    return (
+  return (
+    <ListItem style={style} key={index} component="div" disablePadding>
       <Grid
         container
-        spacing={2}
-        justify={side === "right" ? "flex-end" : "flex-start"}
-        {...GridContainerProps}
+        direction="row"
+        spacing={0}
+        justifyContent={side === "right" ? "flex-end" : "flex-start"}
       >
-        <Grid item xs={12}>
-          {messages.map((msg, i) => {
-            const TypographyProps = getTypographyProps(msg, i, props);
-            return (
-              <Box key={msg.id || i} className={classes[`${side}Row`]}>
-                <Typography
-                  align={"left"}
-                  {...TypographyProps}
-                  className={cx(
-                    classes.msg,
-                    classes[side],
-                    TypographyProps.className
-                  )}
-                >
-                  {msg}
-                </Typography>
-              </Box>
-            );
-          })}
+        <Grid
+          item
+          xs={12}
+          container
+          direction="column"
+          alignItems={side === "right" ? "flex-end" : "flex-start"}
+        >
+          {messages.map((m, idx) => (
+            <Box
+              key={idx}
+              textAlign="left"
+              marginLeft="20px"
+              marginRight="20px"
+            >
+              <Typography
+                sx={{
+                  paddingTop: 1,
+                  paddingBottom: 1,
+                  paddingLeft: 2,
+                  paddingRight: 2,
+                  borderRadius: 2,
+                  marginTop: 1,
+                  marginBottom: 1,
+                  wordBreak: "break-word",
+                  fontFamily:
+                    // eslint-disable-next-line max-len
+                    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+                  fontSize: "1rem",
+                  backgroundColor: side === "left" ? "#f0f1f1" : "#014a99",
+                  color: side === "left" ? "#000" : "#fff",
+                }}
+              >
+                {m.message}
+              </Typography>
+            </Box>
+          ))}
         </Grid>
       </Grid>
-    );
-  }
-);
-ChatMsg.propTypes = {
-  messages: PropTypes.arrayOf(PropTypes.string),
-  side: PropTypes.oneOf(["left", "right"]),
-  GridContainerProps: PropTypes.shape({}),
-  getTypographyProps: PropTypes.func,
-};
-ChatMsg.defaultProps = {
-  messages: [],
-  side: "left",
-  GridContainerProps: {},
-  getTypographyProps: () => ({}),
+    </ListItem>
+  );
 };
 export default ChatMsg;

@@ -1,19 +1,34 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
+import { useMemo } from "react";
+import { useCallback } from "react";
+import { useState } from "react";
+
+import { Box, List } from "@mui/material";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 import ChatMsg from "./ChatMsg";
 
 const ChatMessages = ({ messages, userid }) => {
   // Automatically scroll down to latest message whenever current user
-  // posts a new message
-  const scrollRef = useRef(null);
-  useEffect(() => {
-    if (scrollRef.current && messages?.at(-1)?.from === "self") {
-      scrollRef.current.scroll({
-        top: scrollRef.current.scrollHeight,
-        behaviour: "smooth",
-      });
-    }
-  }, [messages]);
+  // posts a new message, or when chat messages is first loaded
+  const [loaded, setLoaded] = useState(false);
+  const scrollRef = useCallback(
+    (node) => {
+      if (!loaded && node) {
+        setLoaded(true);
+        node.scroll({
+          top: node.scrollHeight,
+          behaviour: "auto",
+        });
+      } else if (node && messages?.at(-1)?.from === userid) {
+        node.scroll({
+          top: node.scrollHeight,
+          behaviour: "smooth",
+        });
+      }
+    },
+    [messages, userid, loaded]
+  );
 
   // Group consecutive messages from same author
   const groupedMessages = messages.reduce((acc, curr) => {
@@ -26,28 +41,32 @@ const ChatMessages = ({ messages, userid }) => {
   }, []);
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(1, 1fr)",
-        gridTemplateRows: "auto",
-        overflow: "auto",
-        paddingTop: 0,
-        paddingBottom: 0,
-        paddingLeft: 10,
-        paddingRight: 10,
-        gridArea: "chat",
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        bgcolor: "background.paper",
       }}
-      ref={scrollRef}
     >
-      {groupedMessages.map((messageGroup, idx) => (
-        <ChatMsg
-          side={messageGroup[0].from !== userid ? "left" : "right"}
-          key={idx}
-          messages={messageGroup.map((m) => m.message)}
-        />
-      ))}
-    </div>
+      <AutoSizer>
+        {({ height, width }) => (
+          <List
+            sx={{ height: height, width: width, overflow: "auto" }}
+            ref={scrollRef}
+          >
+            {groupedMessages.map((messages, index) => (
+              <ChatMsg
+                key={index}
+                index={index}
+                userid={userid}
+                style={{}}
+                messages={messages}
+              />
+            ))}
+          </List>
+        )}
+      </AutoSizer>
+    </Box>
   );
 };
 

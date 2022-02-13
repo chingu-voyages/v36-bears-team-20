@@ -13,7 +13,9 @@ import TopBar from "./TopBar";
 
 async function getChatIds(userid, token) {
   const resp = await axios.get(
-    `http://localhost:8000/api/users/${userid}/chatrooms`,
+    `${
+      process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+    }/api/users/${userid}/chatrooms`,
     {
       headers: { Authorization: `Bearer ${token}` },
     }
@@ -23,7 +25,9 @@ async function getChatIds(userid, token) {
 
 async function getChatRoomMessages(chatroom_id, token) {
   const resp = await axios.get(
-    `http://localhost:8000/api/chatrooms/${chatroom_id}/messages`,
+    `${
+      process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+    }/api/chatrooms/${chatroom_id}/messages`,
     {
       headers: { Authorization: `Bearer ${token}` },
     }
@@ -32,16 +36,26 @@ async function getChatRoomMessages(chatroom_id, token) {
 }
 
 async function getEventDetails(eventId, token) {
-  const resp = await axios.get(`http://localhost:8000/api/events/${eventId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const resp = await axios.get(
+    `${
+      process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+    }/api/events/${eventId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return resp.data;
 }
 
 async function getUserName(userid, token) {
-  const resp = await axios.get(`http://localhost:8000/api/users/${userid}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const resp = await axios.get(
+    `${
+      process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+    }/api/users/${userid}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return resp.data.username;
 }
 

@@ -37,9 +37,15 @@ function Profile() {
       };
 
       axios
-        .put(`http://localhost:8000/api/users/${user._id}`, form, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        .put(
+          `${
+            process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+          }/api/users/${user._id}`,
+          form,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
         .then(() => {
           toast.success("Profile updated successfully. Please relogin.", {
             toastId: "profile_update",
@@ -78,9 +84,14 @@ function Profile() {
   useEffect(() => {
     if (token && user) {
       axios
-        .get(`http://localhost:8000/api/users/${user._id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        .get(
+          `${
+            process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+          }/api/users/${user._id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
         .then((response) => {
           setProfile(response.data);
         })

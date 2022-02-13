@@ -21,9 +21,12 @@ function App() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8000/message", {
-      auth: { token: `Bearer ${token}` },
-    });
+    const newSocket = io(
+      `${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/message`,
+      {
+        auth: { token: `Bearer ${token}` },
+      }
+    );
 
     setSocket(newSocket);
     return () => newSocket.close();

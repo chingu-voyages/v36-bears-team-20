@@ -54,7 +54,9 @@ export default function EventPopup({ currentEventId, togglePopup }) {
     if (token) {
       axios
         .put(
-          `http://localhost:8000/api/events/join/${currentEventId}`,
+          `${
+            process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+          }/api/events/join/${currentEventId}`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -92,7 +94,9 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   const handleLeaveEvent = () => {
     axios
       .put(
-        `http://localhost:8000/api/events/leave/${currentEventId}`,
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/events/leave/${currentEventId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )

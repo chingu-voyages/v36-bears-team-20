@@ -27,7 +27,7 @@ mongoose.connect(
 );
 
 const corsOptions = {
-  origin: "*",
+  origin: ["http://localhost:3000", process.env.FRONTEND_URL],
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -35,7 +35,7 @@ const corsOptions = {
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
-  cors: { origin: "http://localhost:3000" },
+  cors: { origin: corsOptions.origin }
 });
 
 // view engine setup

@@ -133,11 +133,10 @@ export default function Chatbox({ socket }) {
         : currentChat.guestUserName // If user is a host talking to a guest, show guest's name
       : undefined;
 
-  /*
   if (!user || !token) {
     return <Navigate to="/login" state={{ from: location }} />;
   }
-  */
+
   return (
     <Box sx={{ display: "flex" }}>
       <SideDrawer {...{ chatsAsGuest, chatsAsHost, setCurrentChatId }} />

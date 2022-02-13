@@ -121,7 +121,8 @@ const SideDrawer = ({ chatsAsGuest, chatsAsHost, setCurrentChatId }) => {
                   }
                 />
                 <Typography fontStyle="italic">
-                  {timeConverter(chat.messages?.at(-1)?.["timestamp"]) || null}
+                  {chat.messages.length !== 0 &&
+                    timeConverter(chat.messages?.at(-1)?.["timestamp"])}
                 </Typography>
               </ListItem>
               <Divider />

@@ -1,21 +1,31 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { Popup } from "react-map-gl";
-import moment from "moment";
-import TalkImg from "../images/talk.png";
-import { UserContext } from "../context/user-context";
+
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import PeopleIcon from "@mui/icons-material/People";
+import Badge from "@mui/material/Badge";
+import IconButton from "@mui/material/IconButton";
 import axios from "axios";
+import moment from "moment";
+import { Popup } from "react-map-gl";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+import { UserContext } from "../context/user-context";
+import TalkImg from "../images/talk.png";
 
 export default function EventPopup({ currentEventId, togglePopup }) {
   const [eventOwner, setEventOwner] = useState(null);
-  const { user, isLoggedIn } = useContext(UserContext);
+  const { user, token, setToken } = useContext(UserContext);
   const [eventData, setEventData] = useState(null);
   const navigate = useNavigate();
 
   const getEventOwner = (event) => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/users/${event.userId}`)
+      .get(
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/users/${event.userId}`
+      )
       .then((response) => {
         setEventOwner(response.data);
       })
@@ -26,7 +36,11 @@ export default function EventPopup({ currentEventId, togglePopup }) {
 
   const getEventData = () => {
     axios
-      .get(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/events/${currentEventId}`)
+      .get(
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/events/${currentEventId}`
+      )
       .then((response) => {
         setEventData(response.data);
         getEventOwner(response.data);
@@ -37,22 +51,39 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   };
 
   const handleJoinEvent = () => {
-    if (isLoggedIn) {
+    if (token) {
       axios
-        .put(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/events/join/${currentEventId}`, {
-          user: user,
-        })
+        .put(
+          `${
+            process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+          }/api/events/join/${currentEventId}`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
         .then((response) => {
           setEventData(response.data);
           toast.dismiss();
           toast.clearWaitingQueue();
-          toast.success("You joined the event!",{
-            toastId: "event_join"
+          toast.success("You joined the event!", {
+            toastId: "event_join",
           });
         })
         .catch(({ response }) => {
-          toast.error(response.data,{
-            toastId: "event_join_error"
+          let message = "";
+
+          switch (response.status) {
+            case 401:
+              message = "Invalid session. Please relogin and try again.";
+              setToken("");
+              navigate("/login");
+              break;
+
+            default:
+              message = "Unknown error occurred.";
+          }
+
+          toast.error(message, {
+            toastId: "event_join_error",
           });
         });
     } else {
@@ -62,20 +93,37 @@ export default function EventPopup({ currentEventId, togglePopup }) {
 
   const handleLeaveEvent = () => {
     axios
-      .put(`${process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"}/api/events/leave/${currentEventId}`, {
-        user: user,
-      })
+      .put(
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/events/leave/${currentEventId}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       .then((response) => {
         setEventData(response.data);
         toast.dismiss();
         toast.clearWaitingQueue();
-        toast.success("You left the event!",{
-          toastId: "event_left"
+        toast.success("You left the event!", {
+          toastId: "event_left",
         });
       })
       .catch(({ response }) => {
-        toast.error(response.data,{
-          toastId: "event_left_error"
+        let message = "";
+
+        switch (response.status) {
+          case 401:
+            message = "Invalid session. Please relogin and try again.";
+            setToken("");
+            navigate("/login");
+            break;
+
+          default:
+            message = "Unknown error occurred.";
+        }
+
+        toast.error(message, {
+          toastId: "event_left_error",
         });
       });
   };
@@ -86,7 +134,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   }, []);
 
   return (
-    <div>
+    <>
       {eventData && (
         <Popup
           latitude={eventData.location[0]}
@@ -124,13 +172,13 @@ export default function EventPopup({ currentEventId, togglePopup }) {
               <p>{eventData.activity}</p>
             </div>
             <div className="flex justify-between text-2xl text-blue-500 mt-1">
-              <i className="fas fa-user-friends relative">
-                <div className="absolute bottom-4 left-5 font-sans w-5 h-5 rounded-full bg-red-500 text-white text-xs flex justify-center items-center px-1 py-1">
-                  {eventData.guests.length}
-                </div>
-              </i>
-              {isLoggedIn ? (
-                <div>
+              <IconButton aria-label="guests">
+                <Badge badgeContent={eventData.guests.length} color="secondary">
+                  <PeopleIcon />
+                </Badge>
+              </IconButton>
+              {user && eventData.userId !== user._id ? (
+                <>
                   {eventData.guests.includes(user._id) ? (
                     <button
                       className="bg-red-500 text-white text-sm rounded font-bold px-3 py-1"
@@ -146,21 +194,23 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                       Join
                     </button>
                   )}
-                </div>
+                </>
               ) : (
-                <button
-                  className="bg-blue-500 text-white text-sm rounded font-bold px-3 py-1"
-                  onClick={handleJoinEvent}
-                >
-                  Join
-                </button>
+                `You are the host`
               )}
-
-              <i className="fas fa-comments"></i>
+              <IconButton
+                aria-label="chat"
+                disabled={!eventData.guests.includes(user._id)}
+                href={`/chat`}
+              >
+                <Badge badgeContent={0} color="info">
+                  <ChatBubbleIcon />
+                </Badge>
+              </IconButton>
             </div>
           </div>
         </Popup>
       )}
-    </div>
+    </>
   );
 }

@@ -7,6 +7,6 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [require("@themesberg/flowbite/plugin")],
-  content: ["./node_modules/@themesberg/flowbite/**/*.js"],
+  plugins: [require("flowbite/plugin")],
+  content: ["./node_modules/flowbite/**/*.js"],
 };

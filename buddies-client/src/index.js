@@ -1,12 +1,16 @@
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import "react-datepicker/dist/react-datepicker.css";
-import "@themesberg/flowbite";
+import "flowbite";
 import React from "react";
-import { BrowserRouter } from "react-router-dom";
-import { UserContextProvider } from "./context/user-context";
+
 import ReactDOM from "react-dom";
-import "./index.css";
+import { BrowserRouter } from "react-router-dom";
+
 import App from "./App";
+// eslint-disable-next-line import/order
+import { UserContextProvider } from "./context/user-context";
+
+import "./index.css";
+
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(

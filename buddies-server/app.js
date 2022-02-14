@@ -35,7 +35,7 @@ const corsOptions = {
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
-  cors: { origin: corsOptions.origin }
+  cors: { origin: corsOptions.origin },
 });
 
 // view engine setup

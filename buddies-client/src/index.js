@@ -1,6 +1,5 @@
-import "@fortawesome/fontawesome-free/css/all.min.css";
 import "react-datepicker/dist/react-datepicker.css";
-import "@themesberg/flowbite";
+import "flowbite";
 import React from "react";
 
 import ReactDOM from "react-dom";

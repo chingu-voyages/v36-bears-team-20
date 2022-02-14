@@ -1,180 +1,183 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useContext } from "react";
 
-import SendIcon from "@mui/icons-material/Send";
-import { Avatar, Box, Button, TextField, AppBar, Toolbar } from "@mui/material";
+import { Box } from "@mui/material";
+import axios from "axios";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
-import ChatMsg from "./ChatMsg";
+import { UserContext } from "../../context/user-context";
+import ChatMessages from "./ChatMessages";
+import SideDrawer from "./SideDrawer";
+import TextInput from "./TextInput";
+import TopBar from "./TopBar";
 
-const TopBar = ({ organizerName, onlineStatus }) => {
-  return (
-    <AppBar position="relative" color="primary">
-      <Toolbar>
-        <Avatar sx={{ mr: 2 }} />
-        {organizerName} | {onlineStatus}
-      </Toolbar>
-    </AppBar>
+async function getChatIds(userid, token) {
+  const resp = await axios.get(
+    `${
+      process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+    }/api/users/${userid}/chatrooms`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
   );
-};
+  return resp.data;
+}
 
-const ChatMessages = ({ currentUser, messages }) => {
-  // Scroll down to latest message
-  const scrollRef = useRef(null);
+async function getChatRoomMessages(chatroom_id, token) {
+  const resp = await axios.get(
+    `${
+      process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+    }/api/chatrooms/${chatroom_id}/messages`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return resp.data;
+}
+
+async function getEventDetails(eventId, token) {
+  const resp = await axios.get(
+    `${
+      process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+    }/api/events/${eventId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return resp.data;
+}
+
+async function getUserName(userid, token) {
+  const resp = await axios.get(
+    `${
+      process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+    }/api/users/${userid}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return resp.data.username;
+}
+
+async function getChats(chat_ids, token) {
+  const chats = [];
+  for (const chat_id of chat_ids) {
+    const chatroom_messages = await getChatRoomMessages(chat_id, token);
+    const event_details = await getEventDetails(
+      chatroom_messages["relatedId"],
+      token
+    );
+    const chatroom = {
+      ...{
+        hostUserName: await getUserName(chatroom_messages.host, token),
+        guestUserName: await getUserName(chatroom_messages.guest, token),
+        eventName: event_details.name,
+      },
+      ...chatroom_messages,
+    };
+    chats.push(chatroom);
+  }
+  return chats;
+}
+
+async function fetchChats(user, token, setChatsAsGuest, setChatsAsHost) {
+  try {
+    if (token && user) {
+      // Get current user's chatroom ids
+      const chat_ids = await getChatIds(user._id, token);
+      const chat_ids_as_guest = chat_ids["chatroomsAsGuest"];
+      const chat_ids_as_host = chat_ids["chatroomsAsHost"];
+      // Get current user's chatrooms
+      const chats_as_guest = await getChats(chat_ids_as_guest, token);
+      const chats_as_host = await getChats(chat_ids_as_host, token);
+
+      setChatsAsGuest(chats_as_guest);
+      setChatsAsHost(chats_as_host);
+    }
+  } catch (e) {
+    console.error("unknown error occurred");
+  }
+}
+
+export default function Chatbox({ socket }) {
+  const { user, token, setToken } = useContext(UserContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [chatsAsGuest, setChatsAsGuest] = useState([]);
+  const [chatsAsHost, setChatsAsHost] = useState([]);
+  const [currentChatId, setCurrentChatId] = useState(null);
+
   useEffect(() => {
-    if (scrollRef.current && messages?.at(-1)?.user === currentUser) {
-      scrollRef.current.scroll({
-        top: scrollRef.current.scrollHeight,
-        behaviour: "smooth",
+    fetchChats(user, token, setChatsAsGuest, setChatsAsHost);
+  }, [user, token, navigate, setToken, currentChatId]);
+
+  useEffect(() => {
+    if (socket) {
+      // Refresh everything when any message is received
+      socket.on("receiveMessage", () => {
+        fetchChats(user, token, setChatsAsGuest, setChatsAsHost);
       });
     }
-  }, [messages, currentUser]);
+  }, [socket, token, user]);
 
-  // Group consecutive messages from same author
-  const groupedMessages = messages.reduce((acc, curr) => {
-    if (acc.at(-1)?.at(-1)?.user === curr.user) {
-      acc.at(-1).push(curr);
-    } else {
-      acc.push([curr]);
-    }
-    return acc;
-  }, []);
-
-  return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(1, 1fr)",
-        gridTemplateRows: "auto",
-        overflow: "auto",
-        paddingTop: 10,
-        paddingLeft: 10,
-        paddingRight: 10,
-      }}
-      ref={scrollRef}
-    >
-      {groupedMessages.map((messageGroup, idx) => (
-        <ChatMsg
-          side={
-            messageGroup[0].organizer === messageGroup[0].user
-              ? "left"
-              : "right"
-          }
-          key={idx}
-          messages={messageGroup.map((m) => m.message)}
-        />
-      ))}
-    </div>
+  // Is the user a guest in the current chat?
+  const currentChatAsGuest = chatsAsGuest.some(
+    (chat) => chat._id === currentChatId
   );
-};
+  // Is the user a host in the current chat?
+  const currentChatAsHost = chatsAsHost.some(
+    (chat) => chat._id === currentChatId
+  );
 
-const TextInput = ({ setMessages }) => {
-  const [inputText, setInputText] = useState("");
+  // Get the current chatroom
+  const currentChat = currentChatAsGuest
+    ? chatsAsGuest.find((chat) => chat._id === currentChatId)
+    : currentChatAsHost
+    ? chatsAsHost.find((chat) => chat._id === currentChatId)
+    : undefined;
+
+  // Name to display on top of chat bar
+  const counterPartyName =
+    currentChat !== undefined
+      ? currentChatAsGuest
+        ? currentChat.hostUserName // If user is a guest talking to host, show host's name
+        : currentChat.guestUserName // If user is a host talking to a guest, show guest's name
+      : undefined;
+
+  if (!user || !token) {
+    return <Navigate to="/login" state={{ from: location }} />;
+  }
+
   return (
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: "minmax(0, 1fr) 96px",
-        gridTemplateRows: "auto",
-      }}
-      component="form"
-      noValidate
-      autoComplete="off"
-      onSubmit={(e) => {
-        e.preventDefault();
-        setMessages((messages) =>
-          messages.concat({
-            organizer: 10,
-            user: 20,
-            event: 20,
-            message: inputText,
-            timestamp: 1643285547,
-          })
-        );
-        setInputText("");
-      }}
-    >
-      <TextField
-        placeholder="Type here..."
-        onChange={(e) => {
-          setInputText(e.target.value);
+    <Box sx={{ display: "flex" }}>
+      <SideDrawer {...{ chatsAsGuest, chatsAsHost, setCurrentChatId }} />
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateAreas: `"header"
+                        "chat"
+                        "textinput"`,
+          gridTemplateColumns: "auto",
+          gridTemplateRows: "64px minmax(0, 1fr) 56px",
+          bgcolor: (theme) => theme.palette.background.paper,
+          padding: 0,
+          minHeight: "100vh",
+          flexGrow: 1,
         }}
-        value={inputText}
-      />
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        disableRipple
-        disabled={inputText === ""}
       >
-        <SendIcon />
-      </Button>
-    </Box>
-  );
-};
-
-export default function Chatbox({ organizerID, userID }) {
-  const organizerName = "Yoda"; // Search by organizerID for organizerName
-  const onlineStatus = "online"; // Search by organizerID for onlineStatus
-  const currentUser = 20;
-  const [messages, setMessages] = useState([
-    {
-      organizer: 10,
-      user: 10,
-      event: 20,
-      message: "Hi!",
-      timestamp: 1643285543,
-    },
-    {
-      organizer: 10,
-      user: 10,
-      event: 20,
-      message: "How's it going?",
-      timestamp: 1643285544,
-    },
-    {
-      organizer: 10,
-      user: 20,
-      event: 20,
-      message: "Doing good!",
-      timestamp: 1643285545,
-    },
-    {
-      organizer: 10,
-      user: 10,
-      event: 20,
-      message: "Great! See you soon!",
-      timestamp: 1643285546,
-    },
-    {
-      organizer: 10,
-      user: 20,
-      event: 20,
-      message: "See you! :)",
-      timestamp: 1643285547,
-    },
-  ]); // Load messages from database
-
-  return (
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateAreas: `"header"
-  "chat"
-  "textinput"`,
-        gridTemplateColumns: "auto",
-        gridTemplateRows: "64px minmax(0, 1fr) 56px",
-        bgcolor: (theme) => theme.palette.background.paper,
-        boxShadow: 8,
-        borderRadius: 2,
-        padding: 0,
-        minWidth: 250,
-        minHeight: 500,
-        maxHeight: 500,
-      }}
-    >
-      <TopBar {...{ organizerName, onlineStatus }} />
-      <ChatMessages {...{ currentUser, messages }} />
-      <TextInput {...{ setMessages }} />
+        {currentChat !== undefined && (
+          <>
+            <TopBar
+              {...{
+                counterPartyName: counterPartyName,
+              }}
+            />
+            <ChatMessages messages={currentChat.messages} userid={user._id} />
+            <TextInput {...{ currentChatId, socket }} />
+          </>
+        )}
+      </Box>
     </Box>
   );
 }

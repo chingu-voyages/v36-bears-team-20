@@ -56,7 +56,11 @@ const UserSchema = new mongoose.Schema(
         "videogames",
       ],
     },
-    chatrooms: {
+    chatroomsAsHost: {
+      type: Array,
+      default: [],
+    },
+    chatroomsAsGuest: {
       type: Array,
       default: [],
     },

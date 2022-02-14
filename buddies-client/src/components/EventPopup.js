@@ -54,7 +54,9 @@ export default function EventPopup({ currentEventId, togglePopup }) {
     if (token) {
       axios
         .put(
-          `http://localhost:8000/api/events/join/${currentEventId}`,
+          `${
+            process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+          }/api/events/join/${currentEventId}`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -92,7 +94,9 @@ export default function EventPopup({ currentEventId, togglePopup }) {
   const handleLeaveEvent = () => {
     axios
       .put(
-        `http://localhost:8000/api/events/leave/${currentEventId}`,
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/events/leave/${currentEventId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       )
@@ -128,7 +132,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
     getEventData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log({ eventData, user });
+
   return (
     <>
       {eventData && (
@@ -173,7 +177,7 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                   <PeopleIcon />
                 </Badge>
               </IconButton>
-              {user ? (
+              {user && eventData.userId !== user._id ? (
                 <>
                   {eventData.guests.includes(user._id) ? (
                     <button
@@ -192,18 +196,12 @@ export default function EventPopup({ currentEventId, togglePopup }) {
                   )}
                 </>
               ) : (
-                <button
-                  className="bg-blue-500 text-white text-sm rounded font-bold px-3 py-1"
-                  onClick={handleJoinEvent}
-                >
-                  Join
-                </button>
+                `You are the host`
               )}
               <IconButton
                 aria-label="chat"
-                onClick={() => {
-                  console.log("show chat");
-                }}
+                disabled={!eventData.guests.includes(user._id)}
+                href={`/chat`}
               >
                 <Badge badgeContent={0} color="info">
                   <ChatBubbleIcon />

@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const { celebrate, Joi, Segments } = require("celebrate");
 const express = require("express");
 const asyncHandler = require("express-async-handler");
 const router = express.Router();
@@ -10,6 +11,13 @@ const User = require("../models/User");
 router.put(
   "/:id",
   requiresRole("user"),
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      username: Joi.string().min(4).max(20),
+      email: Joi.string().lowercase().email(),
+      password: Joi.string().min(6).max(40),
+    }),
+  }),
   asyncHandler(async (req, res) => {
     if (
       req.user._id === req.params.id ||
@@ -53,7 +61,8 @@ router.get(
   "/:id",
   asyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
-    const { chatrooms, password, updatedAt, ...other } = user._doc;
+    const { chatroomsAsGuest, chatroomsAsHost, password, updatedAt, ...other } =
+      user._doc;
 
     return res.status(200).json(other);
   })
@@ -70,7 +79,10 @@ router.get(
     ) {
       const user = await User.findById(req.params.id);
 
-      return res.status(200).json(user.chatrooms);
+      return res.status(200).json({
+        chatroomsAsGuest: user.chatroomsAsGuest,
+        chatroomsAsHost: user.chatroomsAsHost,
+      });
     } else {
       return res
         .status(403)

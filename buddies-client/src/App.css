@@ -110,8 +110,6 @@
 .div-4 {
   display: flex;
   gap: 30px;
-  padding: 0px;
-  margin: 0px 0px 275px 0px;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
@@ -304,6 +302,6 @@
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-around;
-  align-items: stretch;
+  align-items: center;
   align-content: stretch;
 }

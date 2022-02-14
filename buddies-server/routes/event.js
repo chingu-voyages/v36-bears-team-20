@@ -67,18 +67,25 @@ router.put(
       event.guests.push(userId);
       await event.updateOne({ $set: event });
 
-      const user = await User.findById(userId);
-
+      // Create new chatroom
       const chatroom = new Chatroom({
         chatroomType: "event",
         relatedId: event._id,
+        host: event.userId,
+        guest: userId,
       });
 
       await chatroom.save();
 
-      user.chatrooms.push(chatroom._id);
+      const host = await User.findById(event.userId);
+      const guest = await User.findById(userId);
 
-      await user.updateOne({ $set: user });
+      // Add this chatroom to user's list of chatrooms
+      host.chatroomsAsHost.push(String(chatroom._id));
+      guest.chatroomsAsGuest.push(String(chatroom._id));
+
+      await host.updateOne({ $set: host });
+      await guest.updateOne({ $set: guest });
 
       return res.status(200).json(event);
     } else {
@@ -99,19 +106,29 @@ router.put(
       event.guests.splice(event.guests.indexOf(userId), 1);
       await event.updateOne({ $set: event });
 
-      const user = await User.findById(userId);
-
       const chatroom = await Chatroom.findOne(
         {
           chatroomType: "event",
           relatedId: event._id,
+          guest: userId,
         },
         { messages: 0 }
       );
 
-      user.chatrooms.splice(user.chatrooms.indexOf(chatroom._id), 1);
+      const host = await User.findById(event.userId);
+      const guest = await User.findById(userId);
 
-      await user.updateOne({ $set: user });
+      host.chatroomsAsHost.splice(
+        host.chatroomsAsHost.indexOf(chatroom._id),
+        1
+      );
+      guest.chatroomsAsGuest.splice(
+        guest.chatroomsAsGuest.indexOf(chatroom._id),
+        1
+      );
+
+      await host.updateOne({ $set: host });
+      await guest.updateOne({ $set: guest });
 
       await Chatroom.findByIdAndDelete(chatroom._id);
 
@@ -132,9 +149,9 @@ router.delete(
     if (event.userId === req.user._id) {
       await event.deleteOne();
 
-      return res.status(200).json("event has been deleted");
+      return res.status(200).json("Event has been deleted");
     } else {
-      return res.status(403).json("you can only delete your own event");
+      return res.status(403).json("You can only delete your own event");
     }
   })
 );

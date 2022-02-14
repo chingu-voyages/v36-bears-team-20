@@ -9,6 +9,10 @@ const ChatroomMessageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  timestamp: {
+    type: Number,
+    default: () => Date.now(),
+  },
 });
 
 const ChatroomSchema = new mongoose.Schema(
@@ -19,6 +23,12 @@ const ChatroomSchema = new mongoose.Schema(
       enum: ["event"],
     },
     relatedId: {
+      type: String,
+    },
+    host: {
+      type: String,
+    },
+    guest: {
       type: String,
     },
     messages: [ChatroomMessageSchema],

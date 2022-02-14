@@ -1,3 +1,4 @@
+const http = require("http");
 const path = require("path");
 
 const { errors } = require("celebrate");
@@ -8,16 +9,14 @@ const helmet = require("helmet");
 const createError = require("http-errors");
 const mongoose = require("mongoose");
 const logger = require("morgan");
-const http = require("http");
 const socketio = require("socket.io");
 
 const config = require("./config");
+const messagingIo = require("./io/messaging");
 const authRoute = require("./routes/auth");
+const chatroomRoute = require("./routes/chatrooms");
 const eventRoute = require("./routes/event");
 const userRoute = require("./routes/users");
-const chatroomRoute = require("./routes/chatrooms");
-
-const messagingIo = require("./io/messaging");
 
 mongoose.connect(
   config.MONGO_URL,
@@ -35,7 +34,9 @@ const corsOptions = {
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketio(server, {
+  cors: { origin: corsOptions.origin },
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -79,7 +80,7 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-server.listen(8000, () => {
+server.listen(process.env.PORT || 8000, () => {
   console.log("Backend server is running!");
 });
 

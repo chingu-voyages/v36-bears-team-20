@@ -18,7 +18,12 @@ function UserContextProvider(props) {
   useEffect(() => {
     if (token && !user) {
       axios
-        .post("http://localhost:8000/api/auth/verify", { token })
+        .post(
+          `${
+            process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+          }/api/auth/verify`,
+          { token }
+        )
         .then((response) => {
           setUser(response.data);
         })

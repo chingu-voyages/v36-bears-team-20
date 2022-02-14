@@ -47,7 +47,9 @@ export default function AddEventForm({
     event.preventDefault();
     axios
       .post(
-        "http://localhost:8000/api/events",
+        `${
+          process.env.REACT_APP_BACKEND_URL || "http://localhost:8000"
+        }/api/events`,
         {
           name: title,
           date: date,

@@ -9,9 +9,12 @@ import {
 
 import { ButtonBase } from "@mui/material";
 import axios from "axios";
+import mapboxgl from "mapbox-gl";
 import MapGL, { GeolocateControl, Marker } from "react-map-gl";
 import Geocoder from "react-map-gl-geocoder";
 import { toast } from "react-toastify";
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import MapboxWorker from "worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker";
 
 import { UserContext } from "../context/user-context";
 import AddEventForm from "./AddEventForm";
@@ -22,6 +25,8 @@ import MapHeader from "./MapHeader";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
+
+mapboxgl.workerClass = MapboxWorker;
 
 const geolocateControlStyle = {
   right: 10,

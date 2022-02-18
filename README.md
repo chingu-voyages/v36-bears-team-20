@@ -1,7 +1,6 @@
 # Buddies
 
-Buddies is a social media website where you can find people to share activities with,
-If you organize a party or jwan to go for a walk you can find every day new people to spend time with.
+Buddies is a social media website where you can find people to share activities with, if you organize a party or want to go for a walk you can find every day new people to spend time with.
 
 ## Features
 

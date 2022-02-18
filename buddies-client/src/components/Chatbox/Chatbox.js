@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useContext } from "react";
 
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
@@ -127,27 +127,24 @@ export default function Chatbox({ socket }) {
       const chatIdxHost = chatsAsHost.findIndex((e) => e._id === chatroomId);
       const chatIdx = chatIdxGuest === -1 ? chatIdxHost : chatIdxGuest;
       // Append message to the relevant chatroom
-      if (chatIdxGuest === -1) {
-        return setChatsAsHost((e) => {
-          const chats = e;
-          if (chats[chatIdx]["messages"].at(-1)["_id"] !== _id) {
-            chats[chatIdx]["messages"] = chats[chatIdx]["messages"].concat([
-              { from, message, timestamp, _id },
-            ]);
-          }
 
-          return JSON.parse(JSON.stringify(chats));
-        });
+      const concatNewMessage = (e) => {
+        const chats = e;
+        if (
+          chats[chatIdx]["messages"].length === 0 ||
+          chats[chatIdx]["messages"].at(-1)["_id"] !== _id
+        ) {
+          chats[chatIdx]["messages"] = chats[chatIdx]["messages"].concat([
+            { from, message, timestamp, _id },
+          ]);
+        }
+        return JSON.parse(JSON.stringify(chats));
+      };
+
+      if (chatIdxGuest === -1) {
+        return setChatsAsHost((e) => concatNewMessage(e));
       } else {
-        return setChatsAsGuest((e) => {
-          const chats = e;
-          if (chats[chatIdx]["messages"].at(-1)["_id"] !== _id) {
-            chats[chatIdx]["messages"] = chats[chatIdx]["messages"].concat([
-              { from, message, timestamp, _id },
-            ]);
-          }
-          return JSON.parse(JSON.stringify(chats));
-        });
+        return setChatsAsGuest((e) => concatNewMessage(e));
       }
     };
 
@@ -194,34 +191,48 @@ export default function Chatbox({ socket }) {
   }
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <SideDrawer {...{ chatsAsGuest, chatsAsHost, setCurrentChatId }} />
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateAreas: `"header"
+    <Box
+      sx={{
+        display: "flex",
+        width: "100vw",
+        height: "100vh",
+      }}
+      alignItems="center"
+      justifyContent="center"
+    >
+      {loaded ? (
+        <>
+          <SideDrawer {...{ chatsAsGuest, chatsAsHost, setCurrentChatId }} />
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateAreas: `"header"
                         "chat"
                         "textinput"`,
-          gridTemplateColumns: "auto",
-          gridTemplateRows: "64px minmax(0, 1fr) 56px",
-          bgcolor: (theme) => theme.palette.background.paper,
-          padding: 0,
-          minHeight: "100vh",
-          flexGrow: 1,
-        }}
-      >
-        {currentChat !== undefined && (
-          <>
-            <TopBar
-              {...{
-                counterPartyName: counterPartyName,
-              }}
-            />
-            <ChatMessages messages={messages} userid={user._id} />
-            <TextInput {...{ currentChatId, socket }} />
-          </>
-        )}
-      </Box>
+              gridTemplateColumns: "auto",
+              gridTemplateRows: "64px minmax(0, 1fr) 56px",
+              bgcolor: (theme) => theme.palette.background.paper,
+              padding: 0,
+              minHeight: "100vh",
+              flexGrow: 1,
+            }}
+          >
+            {currentChat !== undefined && (
+              <>
+                <TopBar
+                  {...{
+                    counterPartyName: counterPartyName,
+                  }}
+                />
+                <ChatMessages messages={messages} userid={user._id} />
+                <TextInput {...{ currentChatId, socket }} />
+              </>
+            )}
+          </Box>
+        </>
+      ) : (
+        <CircularProgress size="4rem" />
+      )}
     </Box>
   );
 }

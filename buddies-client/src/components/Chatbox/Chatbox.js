@@ -80,7 +80,13 @@ async function getChats(chat_ids, token) {
   return chats;
 }
 
-async function fetchChats(user, token, setChatsAsGuest, setChatsAsHost) {
+async function fetchChats(
+  user,
+  token,
+  setChatsAsGuest,
+  setChatsAsHost,
+  setLoaded
+) {
   try {
     if (token && user) {
       // Get current user's chatroom ids
@@ -93,6 +99,7 @@ async function fetchChats(user, token, setChatsAsGuest, setChatsAsHost) {
 
       setChatsAsGuest(chats_as_guest);
       setChatsAsHost(chats_as_host);
+      setLoaded(true);
     }
   } catch (e) {
     console.error("unknown error occurred");
@@ -107,19 +114,53 @@ export default function Chatbox({ socket }) {
   const [chatsAsGuest, setChatsAsGuest] = useState([]);
   const [chatsAsHost, setChatsAsHost] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    fetchChats(user, token, setChatsAsGuest, setChatsAsHost);
+    fetchChats(user, token, setChatsAsGuest, setChatsAsHost, setLoaded);
   }, [user, token, navigate, setToken, currentChatId]);
 
   useEffect(() => {
-    if (socket) {
-      // Refresh everything when any message is received
-      socket.on("receiveMessage", () => {
-        fetchChats(user, token, setChatsAsGuest, setChatsAsHost);
-      });
+    const receiveMessage = ({ from, timestamp, chatroomId, message, _id }) => {
+      // Find relevant chatroom
+      const chatIdxGuest = chatsAsGuest.findIndex((e) => e._id === chatroomId);
+      const chatIdxHost = chatsAsHost.findIndex((e) => e._id === chatroomId);
+      const chatIdx = chatIdxGuest === -1 ? chatIdxHost : chatIdxGuest;
+      // Append message to the relevant chatroom
+      if (chatIdxGuest === -1) {
+        return setChatsAsHost((e) => {
+          const chats = e;
+          if (chats[chatIdx]["messages"].at(-1)["_id"] !== _id) {
+            chats[chatIdx]["messages"] = chats[chatIdx]["messages"].concat([
+              { from, message, timestamp, _id },
+            ]);
+          }
+
+          return JSON.parse(JSON.stringify(chats));
+        });
+      } else {
+        return setChatsAsGuest((e) => {
+          const chats = e;
+          if (chats[chatIdx]["messages"].at(-1)["_id"] !== _id) {
+            chats[chatIdx]["messages"] = chats[chatIdx]["messages"].concat([
+              { from, message, timestamp, _id },
+            ]);
+          }
+          return JSON.parse(JSON.stringify(chats));
+        });
+      }
+    };
+
+    if (loaded && socket) {
+      // Update local cache of messages when any message is received from socket
+      socket.on("receiveMessage", (e) => receiveMessage(e));
+
+      return () => {
+        // turning of socket listener on unmount
+        socket.off("chatMessage", (e) => receiveMessage(e));
+      };
     }
-  }, [socket, token, user]);
+  }, [socket, chatsAsGuest, chatsAsHost, loaded]);
 
   // Is the user a guest in the current chat?
   const currentChatAsGuest = chatsAsGuest.some(
@@ -136,6 +177,9 @@ export default function Chatbox({ socket }) {
     : currentChatAsHost
     ? chatsAsHost.find((chat) => chat._id === currentChatId)
     : undefined;
+
+  // current chat messages
+  const messages = currentChat?.messages;
 
   // Name to display on top of chat bar
   const counterPartyName =
@@ -173,7 +217,7 @@ export default function Chatbox({ socket }) {
                 counterPartyName: counterPartyName,
               }}
             />
-            <ChatMessages messages={currentChat.messages} userid={user._id} />
+            <ChatMessages messages={messages} userid={user._id} />
             <TextInput {...{ currentChatId, socket }} />
           </>
         )}

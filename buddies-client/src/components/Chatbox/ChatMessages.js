@@ -6,7 +6,7 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import ChatMsg from "./ChatMsg";
 
 const ChatMessages = ({ messages, userid }) => {
-  // Automatically scroll down to latest message whenever current user
+  // Automatically scroll down to latest message whenever any user
   // posts a new message, or when chat messages is first loaded
   const [loaded, setLoaded] = useState(false);
   const scrollRef = useCallback(
@@ -17,7 +17,7 @@ const ChatMessages = ({ messages, userid }) => {
           top: node.scrollHeight,
           behaviour: "auto",
         });
-      } else if (node && messages?.at(-1)?.from === userid) {
+      } else if (node && messages && userid) {
         node.scroll({
           top: node.scrollHeight,
           behaviour: "smooth",

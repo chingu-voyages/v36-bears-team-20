@@ -62,7 +62,6 @@ const init = (io) => {
           message,
         });
         chatroom.messages.push(messageObj);
-
         await chatroom.updateOne({ $set: chatroom });
 
         namespace.to(chatroomId).emit("receiveMessage", {
@@ -70,6 +69,7 @@ const init = (io) => {
           timestamp: messageObj.timestamp,
           chatroomId,
           message,
+          _id: String(messageObj._id),
         });
       } else {
         throw new Error("unauthorized");

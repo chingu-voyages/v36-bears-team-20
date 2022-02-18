@@ -35,3 +35,7 @@ If you organize a party or jwan to go for a walk you can find every day new peop
 - [Shafrazi Shiffa](https://github.com/shafrazi)
 - [Wu Ting Feng](https://github.com/elliotwutingfeng)
 - [Alvito Raidhy](https://github.com/alvitoraidhy)
+
+## License
+
+[MIT](./LICENSE)

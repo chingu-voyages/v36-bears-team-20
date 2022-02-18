@@ -127,27 +127,24 @@ export default function Chatbox({ socket }) {
       const chatIdxHost = chatsAsHost.findIndex((e) => e._id === chatroomId);
       const chatIdx = chatIdxGuest === -1 ? chatIdxHost : chatIdxGuest;
       // Append message to the relevant chatroom
-      if (chatIdxGuest === -1) {
-        return setChatsAsHost((e) => {
-          const chats = e;
-          if (chats[chatIdx]["messages"].at(-1)["_id"] !== _id) {
-            chats[chatIdx]["messages"] = chats[chatIdx]["messages"].concat([
-              { from, message, timestamp, _id },
-            ]);
-          }
 
-          return JSON.parse(JSON.stringify(chats));
-        });
+      const concatNewMessage = (e) => {
+        const chats = e;
+        if (
+          chats[chatIdx]["messages"].length === 0 ||
+          chats[chatIdx]["messages"].at(-1)["_id"] !== _id
+        ) {
+          chats[chatIdx]["messages"] = chats[chatIdx]["messages"].concat([
+            { from, message, timestamp, _id },
+          ]);
+        }
+        return JSON.parse(JSON.stringify(chats));
+      };
+
+      if (chatIdxGuest === -1) {
+        return setChatsAsHost((e) => concatNewMessage(e));
       } else {
-        return setChatsAsGuest((e) => {
-          const chats = e;
-          if (chats[chatIdx]["messages"].at(-1)["_id"] !== _id) {
-            chats[chatIdx]["messages"] = chats[chatIdx]["messages"].concat([
-              { from, message, timestamp, _id },
-            ]);
-          }
-          return JSON.parse(JSON.stringify(chats));
-        });
+        return setChatsAsGuest((e) => concatNewMessage(e));
       }
     };
 
